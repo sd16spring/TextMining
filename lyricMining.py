@@ -13,13 +13,17 @@ import os
 
 
 
-def formatSpaces(artist):
-	""" formats artist name to musixmatch's format (-'s for spaces) 
+def formatSpaces(string):
+	""" formats string to musixmatch's format (-'s for spaces, removes trailing whitespace) 
 
-		artist: unformatted artist name
-		returns: formatted artist name
+		artist: unformatted string
+		returns: formatted string
 	"""
-	return artist.replace(' ', '-') 
+
+	formatted = string.rstrip()
+	formatted = formatted.replace(' ', '-')
+
+	return formatted
 
 
 def getArtistPages(unformattedArtist):
@@ -113,25 +117,9 @@ def getSongList(unformattedArtist, artist, artistPage):
 			song = content[i+1]
 			songList.write(song+'\n')
 
-	# print content.index('')
-	# for i in content:
-	# 	content.remove('')
-	# print content
-
-	# for i in range(len(f)):
-	# 	if unformattedArtist in line:
-	# 		song = f[i - 1]
-	# 		songList.write(song)
-
-	# lines = [line for line in f]
-	# for line in lines[2::6]:
-	# 	song = line
-	# 	songList.write(song)
 	f.close()
 	songList.close()
 
-	### THIS WORKS BUT IT'S SUPER SLOW... I ABORT ONLY TO FIND THE COMPLETE FILE
-	### ALSO, RETURNS LINES NOT IN F... WTF?
 
 def getSongPage(artist, songList):
 	f = open(songList, 'r')
@@ -139,7 +127,7 @@ def getSongPage(artist, songList):
 	# for song in songs:
 	for song in f:
 		songName = formatSpaces(song)
-		url = 'https://www.musixmatch.com/artist/{}/{}'.format(artist, songName)
+		url = 'https://www.musixmatch.com/lyrics/{}/{}'.format(artist, songName)
 		songPage = URL(url).download()
 		content = plaintext(songPage)
 
@@ -147,6 +135,22 @@ def getSongPage(artist, songList):
 		g.write(content.encode("UTF-8"))
 		g.close()
 		break
+
+
+def cleanUpSongPage(fileName):
+	""" takes the song page and returns the unformatted lyrics
+		
+		fileName: '___.txt'
+		generates: file with unformatted lyrics
+	"""
+
+	f = open(fileName, 'r+')
+	content = f.read()
+	i = content.find('Translate lyrics')
+	j = content.rfind('Writer(s)')
+	f.close()
+	print content[i:j]
+	return content[i:j]
 
 
 
@@ -189,6 +193,7 @@ if __name__ == "__main__":
 
 	# getArtistPages('Broken Bells')
 	# concatenateArtistPages('Broken-Bells')
-	getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
+	# getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
 	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
-
+	# formatSpaces('The High Road ')
+	cleanUpSongPage('The-High-Road.txt')
