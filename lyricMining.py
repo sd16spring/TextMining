@@ -1,11 +1,22 @@
+""" CODE FOR SOFTDES MINI PROJECT 3: TEXT MINING
+	SPRING 2016
+
+	MINING SONG LYRICS FOR AN ARTIST
+
+	@author: Gaby Clarke
+
+"""
+
 import string
 from pattern.web import *
 import unicodedata
 
-# f = open('naiveMelody.txt', 'r')
-# lyrics = str(f.read())
-
 def getArtistPages(artist):
+	""" takes an artist and generates all artist pages populated with songs 
+
+		artist: formatted artist name
+		generates: artist pages '___#.txt'
+	"""
 
 	i = 0
 	while True:
@@ -21,10 +32,17 @@ def getArtistPages(artist):
 		if '* 15' not in content:
 			break
 
+
 def cleanUpArtistPage(fileName):
+	""" takes an artist page and returns the unformatted song list from that page
+		
+		fileName: '___.txt'
+		returns: unformatted song list
+	"""
+
 	f = open(fileName, 'r+')
 	content = f.read()
-	
+
 	i = content.find('* 01')
 	j = content.rfind('Load more')
 	print content[i:j]
@@ -38,6 +56,7 @@ def cleanUpLyrics(s):
 		string: a string
 		returns: a formatted list of words in the string
 	"""
+
 	string = string.lower()
 
 	for char in string.punctuation:
@@ -47,6 +66,7 @@ def cleanUpLyrics(s):
 	wordList = string.split()
 	return wordList
 
+
 def histogram(wordList):
 	""" takes a list of words and returns a dictionary with each word as a key to the number
 		of times the word appears in the list
@@ -54,13 +74,13 @@ def histogram(wordList):
 		wordList: a list of words
 		returns: dictionary (word and frequency)
 	"""
+
 	d = dict()
 	for word in wordList:
 		d[word] = d.get(word, 0) + 1
 	return d
 
-# lyrics = cleanUp(lyrics)
-# print histogram(lyrics)
+
 
 if __name__ == "__main__":
 	import doctest
