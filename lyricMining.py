@@ -144,13 +144,38 @@ def cleanUpSongPage(fileName):
 		generates: file with unformatted lyrics
 	"""
 
-	f = open(fileName, 'r+')
+	f = open(fileName, 'r')
 	content = f.read()
 	i = content.find('Translate lyrics')
 	j = content.rfind('Writer(s)')
+	lyrics = content[i:j]
 	f.close()
-	print content[i:j]
-	return content[i:j]
+
+	g = open(fileName, 'w')
+	g.write(lyrics)
+	g.close()
+	# return content[i:j]
+
+
+def makeLyrics(fileName):
+	""" 
+		returns: a list of strings of lines of lyrics
+	"""
+	f = open(fileName, 'r')
+	content = f.read()
+	content = content.split('\n')
+	content = [i for i in content if i != '' and i != 'Translate lyrics']
+	f.close()
+	return content
+
+
+def analyzeLyrics(fileName):
+	lyrics = makeLyrics(fileName)
+	dictionary = dict()
+	for i in lyrics:
+		words = cleanUpLyrics(i)
+		histogram(words, dictionary)
+	print dictionary
 
 
 
@@ -158,29 +183,29 @@ def cleanUpLyrics(s):
 	""" takes an unformatted string and returns a list of lowercase words without
 		punctuation
 
-		string: a string
+		s: a string
 		returns: a formatted list of words in the string
 	"""
 
-	string = string.lower()
+	s = s.lower()
 
 	for char in string.punctuation:
 		if char != "'":
-			string = string.replace(char, '')
+			s = s.replace(char, '')
 
-	wordList = string.split()
+	wordList = s.split()
 	return wordList
 
 
-def histogram(wordList):
+def histogram(wordList, d):
 	""" takes a list of words and returns a dictionary with each word as a key to the number
 		of times the word appears in the list
 
 		wordList: a list of words
+		d: dictionary to store histogram in
 		returns: dictionary (word and frequency)
 	"""
 
-	d = dict()
 	for word in wordList:
 		d[word] = d.get(word, 0) + 1
 	return d
@@ -188,12 +213,9 @@ def histogram(wordList):
 
 
 if __name__ == "__main__":
-	import doctest
-	# doctest.testmod()
-
 	# getArtistPages('Broken Bells')
 	# concatenateArtistPages('Broken-Bells')
 	# getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
 	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
 	# formatSpaces('The High Road ')
-	cleanUpSongPage('The-High-Road.txt')
+	analyzeLyrics('The-High-Road.txt')
