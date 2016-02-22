@@ -9,14 +9,27 @@
 
 import string
 from pattern.web import *
-import unicodedata
+import os
 
-def getArtistPages(artist):
+
+
+def formatArtist(artist):
+	""" formats artist name to musixmatch's format (-'s for spaces) 
+
+		artist: unformatted artist name
+		returns: formatted artist name
+	"""
+	return artist.replace(' ', '-') 
+
+
+def getArtistPages(unformattedArtist):
 	""" takes an artist and generates all artist pages populated with songs 
 
-		artist: formatted artist name
+		unformattedArtist: artist name
 		generates: artist pages '___#.txt'
 	"""
+
+	artist = formatArtist(unformattedArtist)
 
 	i = 0
 	while True:
@@ -33,20 +46,50 @@ def getArtistPages(artist):
 			break
 
 
+def concatenateArtistPages(artist):
+	concatenated = open('{}.txt'.format(artist), 'a')
+	files = [f for f in os.listdir('.') if os.path.isfile(f) and '{}'.format(artist) in f and f != '{}.txt'.format(artist)]
+	for file in files:
+		if file == files[-1]:
+			content = cleanUpLastArtistPage(file)
+		else:
+			content = cleanUpArtistPage(file)
+		# f = open(file, 'r')
+		# content = f.read()
+		concatenated.write(content)
+		# f.close()
+	
+	concatenated.close()
+
+
 def cleanUpArtistPage(fileName):
 	""" takes an artist page and returns the unformatted song list from that page
 		
 		fileName: '___.txt'
-		returns: unformatted song list
+		generates: file with unformatted song list
 	"""
 
 	f = open(fileName, 'r+')
 	content = f.read()
-
 	i = content.find('* 01')
 	j = content.rfind('Load more')
-	print content[i:j]
+	# f.write(content[i:j])
+	f.close()
 	return content[i:j]
+
+
+def cleanUpLastArtistPage(fileName):
+	f = open(fileName, 'r+')
+	content = f.read()
+	i = content.find('* 01')
+	j = content.rfind('editors')
+	# f.write(content[i:j])
+	f.close()
+	return content[i:j]
+
+
+def getSongList():
+	pass
 
 
 def cleanUpLyrics(s):
@@ -86,6 +129,6 @@ if __name__ == "__main__":
 	import doctest
 	# doctest.testmod()
 
-	# getArtistPages('Broken-Bells')
-	cleanUpArtistPage('Broken-Bells1.txt')
+	# getArtistPages('Broken Bells')
+	concatenateArtistPages('Broken-Bells')
 
