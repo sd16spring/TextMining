@@ -13,7 +13,7 @@ import os
 
 
 
-def formatArtist(artist):
+def formatSpaces(artist):
 	""" formats artist name to musixmatch's format (-'s for spaces) 
 
 		artist: unformatted artist name
@@ -29,7 +29,7 @@ def getArtistPages(unformattedArtist):
 		generates: artist pages '___#.txt'
 	"""
 
-	artist = formatArtist(unformattedArtist)
+	artist = formatSpaces(unformattedArtist)
 
 	i = 0
 	while True:
@@ -47,6 +47,13 @@ def getArtistPages(unformattedArtist):
 
 
 def concatenateArtistPages(artist):
+	""" parses current directory for all files containing artist name and concatenates
+		those artist pages into one cleaned-up page
+
+		artist: formatted artist name
+		generates: concatenated artist page
+	"""
+	
 	concatenated = open('{}.txt'.format(artist), 'a')
 	files = [f for f in os.listdir('.') if os.path.isfile(f) and '{}'.format(artist) in f and f != '{}.txt'.format(artist)]
 	for file in files:
@@ -54,10 +61,7 @@ def concatenateArtistPages(artist):
 			content = cleanUpLastArtistPage(file)
 		else:
 			content = cleanUpArtistPage(file)
-		# f = open(file, 'r')
-		# content = f.read()
 		concatenated.write(content)
-		# f.close()
 	
 	concatenated.close()
 
@@ -73,23 +77,77 @@ def cleanUpArtistPage(fileName):
 	content = f.read()
 	i = content.find('* 01')
 	j = content.rfind('Load more')
-	# f.write(content[i:j])
 	f.close()
 	return content[i:j]
 
 
 def cleanUpLastArtistPage(fileName):
+	""" takes the last artist page and returns the unformatted song list from that page
+		
+		fileName: '___.txt'
+		generates: file with unformatted song list
+	"""
+
 	f = open(fileName, 'r+')
 	content = f.read()
 	i = content.find('* 01')
 	j = content.rfind('editors')
-	# f.write(content[i:j])
 	f.close()
 	return content[i:j]
 
 
-def getSongList():
-	pass
+def getSongList(unformattedArtist, artist, artistPage):
+	"""
+		artist: formatted artist name
+		artistPage: concatenated artist page ('formattedArtist.txt')
+	"""
+	f = open(artistPage, 'r')
+	songList = open(artist + 'Songs.txt', 'a')
+	
+	content = f.read()
+	content = content.split('\n')
+	content = [i for i in content if i != '' and i != 'Add lyrics']
+
+	for i in range(len(content)):
+		if '* ' in content[i]:
+			song = content[i+1]
+			songList.write(song+'\n')
+
+	# print content.index('')
+	# for i in content:
+	# 	content.remove('')
+	# print content
+
+	# for i in range(len(f)):
+	# 	if unformattedArtist in line:
+	# 		song = f[i - 1]
+	# 		songList.write(song)
+
+	# lines = [line for line in f]
+	# for line in lines[2::6]:
+	# 	song = line
+	# 	songList.write(song)
+	f.close()
+	songList.close()
+
+	### THIS WORKS BUT IT'S SUPER SLOW... I ABORT ONLY TO FIND THE COMPLETE FILE
+	### ALSO, RETURNS LINES NOT IN F... WTF?
+
+def getSongPage(artist, songList):
+	f = open(songList, 'r')
+	# songs = [song for song in f]
+	# for song in songs:
+	for song in f:
+		songName = formatSpaces(song)
+		url = 'https://www.musixmatch.com/artist/{}/{}'.format(artist, songName)
+		songPage = URL(url).download()
+		content = plaintext(songPage)
+
+		g = open('{}.txt'.format(songName), 'w')
+		g.write(content.encode("UTF-8"))
+		g.close()
+		break
+
 
 
 def cleanUpLyrics(s):
@@ -130,5 +188,7 @@ if __name__ == "__main__":
 	# doctest.testmod()
 
 	# getArtistPages('Broken Bells')
-	concatenateArtistPages('Broken-Bells')
+	# concatenateArtistPages('Broken-Bells')
+	getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
+	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
 
