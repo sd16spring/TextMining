@@ -10,6 +10,7 @@
 import string
 from pattern.web import *
 import os
+import math
 
 
 
@@ -123,8 +124,6 @@ def getSongList(unformattedArtist, artist, artistPage):
 
 def getSongPage(artist, songList):
 	f = open(songList, 'r')
-	# songs = [song for song in f]
-	# for song in songs:
 	for song in f:
 		songName = formatSpaces(song)
 		url = 'https://www.musixmatch.com/lyrics/{}/{}'.format(artist, songName)
@@ -135,6 +134,7 @@ def getSongPage(artist, songList):
 		g.write(content.encode("UTF-8"))
 		g.close()
 		break
+	f.close()
 
 
 def cleanUpSongPage(fileName):
@@ -211,6 +211,28 @@ def histogram(wordList, d):
 	return d
 
 
+def cosineSimilarity(d1, d2):
+	""" adapted from http://stackoverflow.com/questions/15173225/how-to-calculate-cosine-similarity-given-2-sentence-strings-python
+
+		d1, d2: dictionaries of lyrics characterized by word frequencies
+	"""
+
+	intersection = set(d1.keys()) & set(d2.keys())
+	numerator = sum([d1[i] * d2[i] for i in intersection])
+
+	sum1 = sum([d1[i]**2 for i in d1.keys()])
+	sum2 = sum([d2[i]**2 for i in d2.keys()])
+	denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+	if not denominator: # if denominator == 0, we divide by 0
+		return 0.0
+	else:
+		return float(numerator) / denominator
+
+
+d1 = {'cat': 1, 'dog': 2, 'parrot': 2}
+d2 = {'cat': 1, 'dog': 2, 'rabbit': 1}
+
 
 if __name__ == "__main__":
 	# getArtistPages('Broken Bells')
@@ -218,4 +240,7 @@ if __name__ == "__main__":
 	# getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
 	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
 	# formatSpaces('The High Road ')
-	analyzeLyrics('The-High-Road.txt')
+	# analyzeLyrics('The-High-Road.txt')
+	print cosineSimilarity(d1,d2)
+
+
