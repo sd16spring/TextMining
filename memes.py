@@ -27,14 +27,18 @@ def markovGen(filename):
 			for i in range(len(words)):#normalize all words to lowercase
 				words[i] = words[i].lower()
 			for i in range(len(words) - 1):#add things to markov matrix
-				word = words[i]
-				if(not(word in mark.keys())):#if the word is not already in the markov, create a new entry for it and the following word
-					mark[word] = {words[i+1] : 1}
+				wordy = words[i]
+				if(not(wordy in mark.keys())):#if the word is not already in the markov, create a new entry for it and the following word
+					mark[wordy] = {words[i+1] : 1}
 				else:
-					if(words[i+1] in mark[word].keys()):#check to see if the following word is in the dictionary for the current word, increment if it is otherwise create a new entry
-						mark[word][words[i+1]] += 1
+					if(words[i+1] in mark[wordy].keys()):#check to see if the following word is in the dictionary for the current word, increment if it is otherwise create a new entry
+						mark[wordy][words[i+1]] += 1
 					else:
-						mark[word][words[i+1]] = 1
+						mark[wordy][words[i+1]] = 1
+			if('.end!' in mark[wordy].keys()):#create an entry to indicate the end of a tweet
+				mark[wordy]['.end!'] += 1
+			else:
+				mark[wordy]['.end!'] = 1
 	fout = open('markovMeme.txt', 'w')#save the markov
 	dump(mark, fout)
 	fout.close()
@@ -50,7 +54,7 @@ def markovMemer(markFile):
 		meme = ''
 		curWord = word
 		try:
-			for x in range(random.randint(5, 12)):
+			for x in range(random.randint(10, 30)):
 				sortedKeys, sortedFreq = selectionSort(mark[curWord])
 				tot = sum(sortedFreq)
 				choice = random.randint(1, tot)
@@ -59,9 +63,12 @@ def markovMemer(markFile):
 				while(choice > 0):
 					i += 1
 					choice -= sortedFreq[i]
+				if(sortedKeys[i] == '.end!'):
+					break
 				meme += sortedKeys[i] + ' '
 				curWord = sortedKeys[i]
-			memes.append(meme)
+			if(meme != ''):
+				memes.append(meme[:len(meme)-1])
 		except Exception:
 			pass
 	fout = open('maymays.txt', 'w')
@@ -87,5 +94,5 @@ def selectionSort(d):
 	return k, a
 
 if __name__ == '__main__':
-	#print(markovGen('dankmeme_search2.txt'))
+	# print(markovGen('dankmeme_search.txt'))
 	print(markovMemer('markovMeme.txt'))
