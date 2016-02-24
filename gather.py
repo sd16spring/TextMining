@@ -3,7 +3,7 @@ from os.path import exists
 import sys
 from pickle import dump, load
 
-def twitterGather(hashtag, iters, sleep):
+def twitterGather(hashtag, iters, sleep):#gathers tweets from live feed
 	fout = open(hashtag[1:] + '.txt', 'w')
 	s = Twitter().stream(hashtag)
 	for i in range(iters):
@@ -17,7 +17,7 @@ def twitterGather(hashtag, iters, sleep):
 			dump(ans, fout)
 	fout.close()
 
-def twitterSearch(query, iters, begin):
+def twitterSearch(query, iters, begin):#searches twitter for tweets including the query
 	fout = open(query + '_search.txt', 'w')
 	t = Twitter()
 	i = begin
@@ -32,4 +32,4 @@ def twitterSearch(query, iters, begin):
 	fout.close()
 if __name__ == '__main__':
 	#twitterGather('#dank', 200, 30)
-	twitterSearch('dankmeme', 500, 4000)
+	twitterSearch('haha', 500, 4000)
