@@ -87,12 +87,12 @@ if __name__ == '__main__':
 	num4 = []
 	for i in range(len(l1)):
 		num1.append(l1[i][0])
-	for i in range(len(l1)):
-		num2.append(l1[i][0])
-	for i in range(len(l1)):
-		num3.append(l1[i][0])
-	for i in range(len(l1)):
-		num4.append(l1[i][0])
+	for i in range(len(l2)):
+		num2.append(l2[i][0])
+	for i in range(len(l3)):
+		num3.append(l3[i][0])
+	for i in range(len(l4)):
+		num4.append(l4[i][0])
 
 
 	myfile1 = open('odyssey_data.csv', 'wb')
