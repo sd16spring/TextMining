@@ -27,14 +27,15 @@ def formatSpaces(string):
 	return formatted
 
 
-def getArtistPages(unformattedArtist):
+def getArtistPages(artist):
 	""" takes an artist and generates all artist pages populated with songs 
 
 		unformattedArtist: artist name
 		generates: artist pages '___#.txt'
 	"""
 
-	artist = formatSpaces(unformattedArtist)
+	if not os.path.isdir('./{}'.format(artist)):
+		os.mkdir('./{}'.format(artist))
 
 	i = 0
 	while True:
@@ -43,9 +44,11 @@ def getArtistPages(unformattedArtist):
 		artistPage = URL(url).download()
 		content = plaintext(artistPage)
 
-		f = open('{}{}.txt'.format(artist, i), 'w')
+		f = open('./{}/{}-{}.txt'.format(artist, artist, i), 'w')
 		f.write(content.encode("UTF-8"))
 		f.close()
+
+		print 'made artistPages'
 
 		if '* 15' not in content:
 			break
@@ -59,8 +62,10 @@ def concatenateArtistPages(artist):
 		generates: concatenated artist page
 	"""
 	
-	concatenated = open('{}.txt'.format(artist), 'a')
-	files = [f for f in os.listdir('.') if os.path.isfile(f) and '{}'.format(artist) in f and f != '{}.txt'.format(artist)]
+	artistPage = './{}/{}.txt'.format(artist, artist)
+
+	concatenated = open(artistPage, 'a')
+	files = [f for f in os.listdir('./{}'.format(artist)) if os.path.isfile(f) and './{}/{}'.format(artist, artist) in f and f != './{}/{}.txt'.format(artist, artist)]
 	for file in files:
 		if file == files[-1]:
 			content = cleanUpLastArtistPage(file)
@@ -70,6 +75,10 @@ def concatenateArtistPages(artist):
 	
 	concatenated.close()
 
+	print 'made concatenatedArtistPage'
+
+	return artistPage
+
 
 def cleanUpArtistPage(fileName):
 	""" takes an artist page and returns the unformatted song list from that page
@@ -78,7 +87,7 @@ def cleanUpArtistPage(fileName):
 		generates: file with unformatted song list
 	"""
 
-	f = open(fileName, 'r+')
+	f = open('./{}/{}'.format(artist, fileName), 'r+')
 	content = f.read()
 	i = content.find('* 01')
 	j = content.rfind('Load more')
@@ -93,7 +102,7 @@ def cleanUpLastArtistPage(fileName):
 		generates: file with unformatted song list
 	"""
 
-	f = open(fileName, 'r+')
+	f = open('./{}/{}'.format(artist, fileName), 'r+')
 	content = f.read()
 	i = content.find('* 01')
 	j = content.rfind('editors')
@@ -101,13 +110,16 @@ def cleanUpLastArtistPage(fileName):
 	return content[i:j]
 
 
-def getSongList(unformattedArtist, artist, artistPage):
+def getSongList(artist, artistPage):
 	"""
 		artist: formatted artist name
 		artistPage: concatenated artist page ('formattedArtist.txt')
 	"""
+	# f = open('./{}/{}'.format(artist, artistPage), 'r')
 	f = open(artistPage, 'r')
-	songList = open(artist + 'Songs.txt', 'a')
+	songListName = './{}/{}-Songs.txt'.format(artist, artist)
+	songList = open(songListName, 'a')
+	print 'made songList'
 	
 	content = f.read()
 	content = content.split('\n')
@@ -121,8 +133,12 @@ def getSongList(unformattedArtist, artist, artistPage):
 	f.close()
 	songList.close()
 
+	print 'populated songList'
 
-def getSongPage(artist, songList):
+	return songListName
+
+
+def getSongPages(artist, songList):
 	f = open(songList, 'r')
 	for song in f:
 		songName = formatSpaces(song)
@@ -130,9 +146,14 @@ def getSongPage(artist, songList):
 		songPage = URL(url).download()
 		content = plaintext(songPage)
 
-		g = open('{}.txt'.format(songName), 'w')
+		fileName = './{}/{}.{}.txt'.format(artist, artist, songName)
+		g = open(fileName, 'w')
 		g.write(content.encode("UTF-8"))
 		g.close()
+		cleanUpSongPage(fileName)
+
+		print 'made songPage'
+
 		break
 	f.close()
 
@@ -157,81 +178,14 @@ def cleanUpSongPage(fileName):
 	# return content[i:j]
 
 
-def makeLyrics(fileName):
-	""" 
-		returns: a list of strings of lines of lyrics
-	"""
-	f = open(fileName, 'r')
-	content = f.read()
-	content = content.split('\n')
-	content = [i for i in content if i != '' and i != 'Translate lyrics']
-	f.close()
-	return content
+def getArtistData(unformattedArtist):
+	artist = formatSpaces(unformattedArtist)
+	
+	getArtistPages(artist)
+	artistPage = concatenateArtistPages(artist)
+	songList = getSongList(artist, artistPage)
+	getSongPages(artist, songList)
 
-
-def analyzeLyrics(fileName):
-	lyrics = makeLyrics(fileName)
-	dictionary = dict()
-	for i in lyrics:
-		words = cleanUpLyrics(i)
-		histogram(words, dictionary)
-	print dictionary
-
-
-
-def cleanUpLyrics(s):
-	""" takes an unformatted string and returns a list of lowercase words without
-		punctuation
-
-		s: a string
-		returns: a formatted list of words in the string
-	"""
-
-	s = s.lower()
-
-	for char in string.punctuation:
-		if char != "'":
-			s = s.replace(char, '')
-
-	wordList = s.split()
-	return wordList
-
-
-def histogram(wordList, d):
-	""" takes a list of words and returns a dictionary with each word as a key to the number
-		of times the word appears in the list
-
-		wordList: a list of words
-		d: dictionary to store histogram in
-		returns: dictionary (word and frequency)
-	"""
-
-	for word in wordList:
-		d[word] = d.get(word, 0) + 1
-	return d
-
-
-def cosineSimilarity(d1, d2):
-	""" adapted from http://stackoverflow.com/questions/15173225/how-to-calculate-cosine-similarity-given-2-sentence-strings-python
-
-		d1, d2: dictionaries of lyrics characterized by word frequencies
-	"""
-
-	intersection = set(d1.keys()) & set(d2.keys())
-	numerator = sum([d1[i] * d2[i] for i in intersection])
-
-	sum1 = sum([d1[i]**2 for i in d1.keys()])
-	sum2 = sum([d2[i]**2 for i in d2.keys()])
-	denominator = math.sqrt(sum1) * math.sqrt(sum2)
-
-	if not denominator: # if denominator == 0, we divide by 0
-		return 0.0
-	else:
-		return float(numerator) / denominator
-
-
-d1 = {'cat': 1, 'dog': 2, 'parrot': 2}
-d2 = {'cat': 1, 'dog': 2, 'rabbit': 1}
 
 
 if __name__ == "__main__":
@@ -240,7 +194,6 @@ if __name__ == "__main__":
 	# getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
 	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
 	# formatSpaces('The High Road ')
-	# analyzeLyrics('The-High-Road.txt')
-	print cosineSimilarity(d1,d2)
+	getArtistData('Broken Bells')
 
 
