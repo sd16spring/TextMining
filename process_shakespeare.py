@@ -85,13 +85,21 @@ def create_cast_dictionary(shake_list,cast_locations,titles,play_number):
 		while not shake_list[i]=='ENDLINE':
 			current_character.append(shake_list[i])
 			i=i+1
-		d[identify_names(current_character)]=current_character
+		keywords=identify_names(current_character)
+		print keywords
+		for word in keywords:
+			print word
+			d[word]=d.get(word, current_character)
+			print current_character
 		i+=1
 		if i-cast_locations[play_number]>=500: #catches if it missed the word scene and just kept iterating through the whole play
 			print shake_list[i]
 			raise ValueError('Cast finder went for too long')
-	#print 'HAS TERMINATED'
 	d['title']=titles[play_number] #adds the play's title as an entry in the dictionary with the key 'title'
+	if d['LEONATUS']==['POSTHUMUS', 'LEONATUS,', 'a', 'gentleman,', 'husband', 'to', 'Imogen']:
+		print 'Successfully assigned!'
+	else:
+		print 'NOT Successfully assigned'
 	return d
 
 def identify_names(name_line):
@@ -104,6 +112,9 @@ def identify_names(name_line):
 		if current_word[-1]==',' or current_word[-1]=='.':
 			name=name_line[:i+1]
 			description=name_line[i+1:]
+			#print 'name:',
+			#print name
+			break
 	for word in name: #adds all the longer words in the name section as keywords
 		if len(word)>3:
 			keywords=keywords+(word,)
@@ -123,9 +134,12 @@ cast_locations=find_casts(shake_list)
 
 titles=find_titles(shake_list,cast_locations)
 
-#print create_cast_dictionary(shake_list,cast_locations,titles,16)
+d=create_cast_dictionary(shake_list,cast_locations,titles,5)
+
+print d['POSTHUMUS']
+print d['LEONATUS']
 
 #print all_dictionaries(shake_list,cast_locations,titles)
 
-print identify_names(['Tybalt,','nephew','to','Lady','Capulet'] )
+#print identify_names(['Tybalt,','nephew','to','Lady','Capulet'] )
 
