@@ -48,8 +48,6 @@ def getArtistPages(artist):
 		f.write(content.encode("UTF-8"))
 		f.close()
 
-		print 'made artistPages'
-
 		if '* 15' not in content:
 			break
 
@@ -65,12 +63,17 @@ def concatenateArtistPages(artist):
 	artistPage = './{}/{}.txt'.format(artist, artist)
 
 	concatenated = open(artistPage, 'a')
-	files = [f for f in os.listdir('./{}'.format(artist)) if os.path.isfile(f) and './{}/{}'.format(artist, artist) in f and f != './{}/{}.txt'.format(artist, artist)]
+	# files = [f for f in os.listdir('./{}/'.format(artist)) if os.path.isfile(f) and './{}/{}'.format(artist, artist) in f and f != './{}/{}.txt'.format(artist, artist)]
+	# files = [f for f in os.listdir('.') if './{}'.format(artist) in f and f != './{}/{}.txt'.format(artist, artist)]
+	files = [f for f in os.listdir('./{}'.format(artist)) if '.txt' in f]
+	print files
+
 	for file in files:
-		if file == files[-1]:
-			content = cleanUpLastArtistPage(file)
-		else:
-			content = cleanUpArtistPage(file)
+		content = cleanUpLastArtistPage(artist, file)
+		# if file == files[-1]:
+		# 	content = cleanUpLastArtistPage(artist, file)
+		# else:
+		# 	content = cleanUpArtistPage(artist, file)
 		concatenated.write(content)
 	
 	concatenated.close()
@@ -80,22 +83,22 @@ def concatenateArtistPages(artist):
 	return artistPage
 
 
-def cleanUpArtistPage(fileName):
-	""" takes an artist page and returns the unformatted song list from that page
+# def cleanUpArtistPage(artist, fileName):
+# 	""" takes an artist page and returns the unformatted song list from that page
 		
-		fileName: '___.txt'
-		generates: file with unformatted song list
-	"""
+# 		fileName: '___.txt'
+# 		generates: file with unformatted song list
+# 	"""
 
-	f = open('./{}/{}'.format(artist, fileName), 'r+')
-	content = f.read()
-	i = content.find('* 01')
-	j = content.rfind('Load more')
-	f.close()
-	return content[i:j]
+# 	f = open('./{}/{}'.format(artist, fileName), 'r+')
+# 	content = f.read()
+# 	i = content.find('* 01')
+# 	j = content.rfind('Load more')
+# 	f.close()
+# 	return content[i:j]
 
 
-def cleanUpLastArtistPage(fileName):
+def cleanUpLastArtistPage(artist, fileName):
 	""" takes the last artist page and returns the unformatted song list from that page
 		
 		fileName: '___.txt'
@@ -107,6 +110,7 @@ def cleanUpLastArtistPage(fileName):
 	i = content.find('* 01')
 	j = content.rfind('editors')
 	f.close()
+	print content[i:j]
 	return content[i:j]
 
 
@@ -133,8 +137,6 @@ def getSongList(artist, artistPage):
 	f.close()
 	songList.close()
 
-	print 'populated songList'
-
 	return songListName
 
 
@@ -151,10 +153,8 @@ def getSongPages(artist, songList):
 		g.write(content.encode("UTF-8"))
 		g.close()
 		cleanUpSongPage(fileName)
-
-		print 'made songPage'
-
 		break
+
 	f.close()
 
 
@@ -181,10 +181,10 @@ def cleanUpSongPage(fileName):
 def getArtistData(unformattedArtist):
 	artist = formatSpaces(unformattedArtist)
 	
-	getArtistPages(artist)
+	# getArtistPages(artist)
 	artistPage = concatenateArtistPages(artist)
 	songList = getSongList(artist, artistPage)
-	getSongPages(artist, songList)
+	# getSongPages(artist, songList)
 
 
 
