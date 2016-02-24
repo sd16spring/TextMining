@@ -6,9 +6,11 @@ from bs4 import BeautifulSoup
 import re
 import pickle
 
-links = []
+links = []# list of links that we will save as links.pickle
 
-html = urlopen("http://www.metrolyrics.com/2pac-lyrics.html")
+baseurl = "http://www.metrolyrics.com/2pac-lyrics.html"
+
+html = urlopen(baseurl)
 bsObj = BeautifulSoup(html)
 
 for link in bsObj.find("div", {"id":"artist-lyrics"}).findAll("a", href=re.compile("2pac.html$")):
@@ -19,3 +21,6 @@ for link in bsObj.find("div", {"id":"artist-lyrics"}).findAll("a", href=re.compi
 f = open("links.pickle", "w")
 pickle.dump(links,f)
 f.close()
+
+#debuging print statements
+print "number of links / songs = " + str(len(links))
