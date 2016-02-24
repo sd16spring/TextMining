@@ -1,2 +1,2 @@
 # TextMining
-This is the base repo for the text mining and analysis project for Software Design, Spring 2016 at Olin College.
+This is the repository for a text-generating program.  It searches Twitter for a certain keyword, then generates strings of words based off of the collected data using Markov analysis.
