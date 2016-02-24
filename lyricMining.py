@@ -1,7 +1,7 @@
 """ CODE FOR SOFTDES MINI PROJECT 3: TEXT MINING
 	SPRING 2016
 
-	MINING SONG LYRICS FOR AN ARTIST
+	MINING SONG LYRICS FOR AN CHOSEN ARTIST
 
 	@author: Gaby Clarke
 
@@ -10,7 +10,6 @@
 import string
 from pattern.web import *
 import os
-import math
 
 
 
@@ -63,6 +62,7 @@ def concatenateArtistPages(artist):
 
 		artist: formatted artist name
 		generates: concatenated artist page
+		returns: artist page name
 	"""
 	
 	artistPage = './{}/{}.txt'.format(artist, artist)
@@ -87,6 +87,7 @@ def cleanUpArtistPage(artist, fileName):
 		
 		fileName: '___.txt'
 		generates: file with unformatted song list
+		returns: the unformatted song list
 	"""
 
 	f = open('./{}/{}'.format(artist, fileName), 'r+')
@@ -98,9 +99,12 @@ def cleanUpArtistPage(artist, fileName):
 
 
 def getSongList(artist, artistPage):
-	"""
+	""" takes an artist page and generates the song list for that artist
+
 		artist: formatted artist name
 		artistPage: concatenated artist page ('formattedArtist.txt')
+		generates: formatted song list ('formattedArtist-Songs.txt')
+		returns: song list name
 	"""
 	
 	songListName = './{}/{}-Songs.txt'.format(artist, artist)
@@ -126,6 +130,12 @@ def getSongList(artist, artistPage):
 
 
 def getSongPages(artist, songList):
+	""" takes a song list and generates song pages for all songs on that list
+
+		artist: formatted artist name
+		generates: unformatted song pages
+	"""
+
 	f = open(songList, 'r')
 	for song in f:
 		if '(' not in song and 'emix' not in song:
@@ -167,6 +177,12 @@ def cleanUpSongPage(fileName):
 
 
 def getArtistData(unformattedArtist):
+	""" given an artist, generates lyrics pages for all non-remix songs by that artist
+		using musixmatch's lyric database
+
+		unformattedArtist: artist name
+		generates: lyrics pages for all non-remix songs by that artist
+	"""
 	artist = formatSpaces(unformattedArtist)
 	
 	getArtistPages(artist)
