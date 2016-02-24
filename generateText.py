@@ -1,3 +1,4 @@
+import urllib
 import pickle
 import random
 
@@ -15,7 +16,7 @@ def generate_line(max_words,first_word_list):
     for i in range(max_words):
         if word != "":
             word = random.choice(prob_dict.get(word,[""]))
-        return_line += " " + word
+            return_line += " " + word
 
     return return_line
 
@@ -27,7 +28,11 @@ def generate_lyrics(number_verses):
         line_list.append("")
     return line_list
 
+header = ["SofDes TextMining - Markov Tupac Lyrics - Nathan Yee"]
+
 rap = generate_lyrics(4)
 
-for line in rap:
+joined = header + rap 
+
+for line in joined:
     print line
