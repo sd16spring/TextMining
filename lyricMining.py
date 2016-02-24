@@ -40,11 +40,16 @@ def getArtistPages(artist):
 	i = 0
 	while True:
 		i += 1
+
+		artistPageName = './{}/{}-{}.txt'.format(artist, artist, i)
+		if os.path.isfile(artistPageName):
+			pass
+
 		url = 'https://www.musixmatch.com/artist/{}/{}'.format(artist, i)
 		artistPage = URL(url).download()
 		content = plaintext(artistPage)
 
-		f = open('./{}/{}-{}.txt'.format(artist, artist, i), 'w')
+		f = open(artistPageName, 'w')
 		f.write(content.encode("UTF-8"))
 		f.close()
 
@@ -61,45 +66,24 @@ def concatenateArtistPages(artist):
 	"""
 	
 	artistPage = './{}/{}.txt'.format(artist, artist)
+	if os.path.isfile(artistPage):
+		pass
 
 	concatenated = open(artistPage, 'a')
-	# files = [f for f in os.listdir('./{}/'.format(artist)) if os.path.isfile(f) and './{}/{}'.format(artist, artist) in f and f != './{}/{}.txt'.format(artist, artist)]
-	# files = [f for f in os.listdir('.') if './{}'.format(artist) in f and f != './{}/{}.txt'.format(artist, artist)]
 	files = [f for f in os.listdir('./{}'.format(artist)) if '.txt' in f]
-	print files
 
 	for file in files:
-		content = cleanUpLastArtistPage(artist, file)
-		# if file == files[-1]:
-		# 	content = cleanUpLastArtistPage(artist, file)
-		# else:
-		# 	content = cleanUpArtistPage(artist, file)
+		content = cleanUpArtistPage(artist, file)
 		concatenated.write(content)
 	
 	concatenated.close()
 
-	print 'made concatenatedArtistPage'
-
 	return artistPage
 
 
-# def cleanUpArtistPage(artist, fileName):
-# 	""" takes an artist page and returns the unformatted song list from that page
-		
-# 		fileName: '___.txt'
-# 		generates: file with unformatted song list
-# 	"""
 
-# 	f = open('./{}/{}'.format(artist, fileName), 'r+')
-# 	content = f.read()
-# 	i = content.find('* 01')
-# 	j = content.rfind('Load more')
-# 	f.close()
-# 	return content[i:j]
-
-
-def cleanUpLastArtistPage(artist, fileName):
-	""" takes the last artist page and returns the unformatted song list from that page
+def cleanUpArtistPage(artist, fileName):
+	""" takes an artist page and returns the unformatted song list from that page
 		
 		fileName: '___.txt'
 		generates: file with unformatted song list
@@ -110,7 +94,6 @@ def cleanUpLastArtistPage(artist, fileName):
 	i = content.find('* 01')
 	j = content.rfind('editors')
 	f.close()
-	print content[i:j]
 	return content[i:j]
 
 
@@ -119,11 +102,13 @@ def getSongList(artist, artistPage):
 		artist: formatted artist name
 		artistPage: concatenated artist page ('formattedArtist.txt')
 	"""
-	# f = open('./{}/{}'.format(artist, artistPage), 'r')
-	f = open(artistPage, 'r')
+	
 	songListName = './{}/{}-Songs.txt'.format(artist, artist)
+	if os.path.isfile(songListName):
+		pass
+
+	f = open(artistPage, 'r')
 	songList = open(songListName, 'a')
-	print 'made songList'
 	
 	content = f.read()
 	content = content.split('\n')
@@ -143,17 +128,21 @@ def getSongList(artist, artistPage):
 def getSongPages(artist, songList):
 	f = open(songList, 'r')
 	for song in f:
-		songName = formatSpaces(song)
-		url = 'https://www.musixmatch.com/lyrics/{}/{}'.format(artist, songName)
-		songPage = URL(url).download()
-		content = plaintext(songPage)
+		if '(' not in song and 'emix' not in song:
 
-		fileName = './{}/{}.{}.txt'.format(artist, artist, songName)
-		g = open(fileName, 'w')
-		g.write(content.encode("UTF-8"))
-		g.close()
-		cleanUpSongPage(fileName)
-		break
+			songName = formatSpaces(song)
+			fileName = './{}/{}.{}.txt'.format(artist, artist, songName)
+
+			if not os.path.isfile(fileName):
+			
+				url = 'https://www.musixmatch.com/lyrics/{}/{}'.format(artist, songName)
+				songPage = URL(url).download()
+				content = plaintext(songPage)
+
+				g = open(fileName, 'w')
+				g.write(content.encode("UTF-8"))
+				g.close()
+				cleanUpSongPage(fileName)
 
 	f.close()
 
@@ -169,31 +158,25 @@ def cleanUpSongPage(fileName):
 	content = f.read()
 	i = content.find('Translate lyrics')
 	j = content.rfind('Writer(s)')
-	lyrics = content[i:j]
+	lyrics = content[i+17:j]
 	f.close()
 
 	g = open(fileName, 'w')
 	g.write(lyrics)
 	g.close()
-	# return content[i:j]
 
 
 def getArtistData(unformattedArtist):
 	artist = formatSpaces(unformattedArtist)
 	
-	# getArtistPages(artist)
+	getArtistPages(artist)
 	artistPage = concatenateArtistPages(artist)
 	songList = getSongList(artist, artistPage)
-	# getSongPages(artist, songList)
+	getSongPages(artist, songList)
 
 
 
 if __name__ == "__main__":
-	# getArtistPages('Broken Bells')
-	# concatenateArtistPages('Broken-Bells')
-	# getSongList('Broken Bells', 'Broken-Bells', 'Broken-Bells.txt')
-	# getSongPage('Broken-Bells', 'Broken-BellsSongs.txt')
-	# formatSpaces('The High Road ')
 	getArtistData('Broken Bells')
 
 
