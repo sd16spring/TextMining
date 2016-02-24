@@ -81,26 +81,30 @@ def create_cast_dictionary(shake_list,cast_locations,titles,play_number):
 	d=dict()
 	i=cast_locations[play_number]+3 #adjusts for 'Dramatis', 'Personae', and 'ENDLINE'
 	while not 'SCENE' in shake_list[i] and not 'Scene' in shake_list[i]: #'Scene' always comes at the start of the play
-		current_character=[]
-		while not shake_list[i]=='ENDLINE':
-			current_character.append(shake_list[i])
-			i=i+1
-		keywords=identify_names(current_character)
-		print keywords
-		for word in keywords:
+		character_values=create_character(shake_list,i)
+		#print character_values[2]
+		for word in character_values[1]:
+			d[word]=character_values[2]
 			print word
-			d[word]=d.get(word, current_character)
-			print current_character
-		i+=1
-		if i-cast_locations[play_number]>=500: #catches if it missed the word scene and just kept iterating through the whole play
-			print shake_list[i]
-			raise ValueError('Cast finder went for too long')
+		i=character_values[0]
+		# if i-cast_locations[play_number]>=500: #catches if it missed the word scene and just kept iterating through the whole play
+		# 	print shake_list[i]
+		# 	raise ValueError('Cast finder went for too long')
 	d['title']=titles[play_number] #adds the play's title as an entry in the dictionary with the key 'title'
-	if d['LEONATUS']==['POSTHUMUS', 'LEONATUS,', 'a', 'gentleman,', 'husband', 'to', 'Imogen']:
-		print 'Successfully assigned!'
-	else:
-		print 'NOT Successfully assigned'
+
 	return d
+
+def create_character(shake_list,current_index):
+	"""Takes where the current character starts and returns a tuple with the word after it ends, a tuple of keywords, and a list that represents the full charcater entry"""
+	character=[]
+	i=current_index
+	while not shake_list[i]=='ENDLINE': #creates character name
+			character.append(shake_list[i])
+			i=i+1
+	keywords=identify_names(character) #gets the keywords from the identify names function
+	new_start=i+1
+	res=(new_start,keywords,character)
+	return res
 
 def identify_names(name_line):
 	"""Takes a line of the cast list, and returns a tuple of the keywords that could be used to refer to that character for the rest of the play"""
@@ -116,9 +120,11 @@ def identify_names(name_line):
 			#print name
 			break
 	for word in name: #adds all the longer words in the name section as keywords
+		word = word.rstrip(string.punctuation)
 		if len(word)>3:
 			keywords=keywords+(word,)
 	for word in description: #if a word in the description is in all caps, adds it too
+		word = word.rstrip(string.punctuation)
 	 	if word.isupper():
 	 		keywords=keywords+(word,)
 	return keywords
