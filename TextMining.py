@@ -1,5 +1,5 @@
 """
-TextMining.py counts the adjectives (as determined by Pattern, which is a bit iffy) used most frequently to describe each of the four main characters in Little Women
+TextMining.py counts the adjectives (as determined by Pattern, which is a bit iffy) used most frequently to describe each of the four main characters in Little Women by Louisa May Alcott.
 
 Software Design 2016 - Olin College of Engineering
 
@@ -23,8 +23,6 @@ def surrounding_words(L, Names, Wrongs):
     []
     """
 
-
-    
     name_mentions = []
     for i in range(len(L)):
         if L[i] in Names:
@@ -40,7 +38,7 @@ def surrounding_words(L, Names, Wrongs):
 
 
 def adjectives(L):
-    """Returns lists of adjecives present in input lists.
+    """Returns a list of adjecives present in input lists.
 
     >>> adjectives([['big', 'white', 'tall', 'dog'], ['bat', 'tall']])
     ['big', 'white', 'tall', 'tall']
@@ -56,6 +54,25 @@ def adjectives(L):
             adjs.append(str(i.string))
 
     return adjs
+
+
+
+def unique_adjectives(L, AllElse):
+    """Returns a list of adjectives unique to the character.
+
+    >>> unique_adjectives(['big', 'tall', 'short'], ['short', 'white', 'black'])
+    ['big', 'tall']
+    >>> unique_adjectives(['tall', 'short'], ['tall', 'short', 'white'])
+    []
+    """
+
+    unique_adjs = []
+    for a in range(len(L)):
+        if L[a] not in AllElse:
+            unique_adjs.append(L[a])
+    
+    return unique_adjs
+
 
 
 
@@ -84,17 +101,30 @@ def frequency(L):
 
 
 
-def archetype(L, N, W):
+def adj_finder(L, N, W):
     """Takes the text of a book, a character's name, and the names of other characters. 
-    Returns tuples of the most commonly used adjectives to describe the character.
-    As the this only calls three doctested functions I decided to skip a doctest for this function.
+    Returns all adjectives used in proximity to the character.
+    As the this only calls doctested functions I decided to skip a doctest for this function.
     """
 
     Mentions = surrounding_words(L, N, W)
     Adjectives = adjectives(Mentions)
-    Freq_Adjectives = frequency(Adjectives)
+    
+    return Adjectives
 
-    return Freq_Adjectives
+
+
+def frequency_unique_adjs(L, AllElse):
+    """Takes a list of adjectives used to describe a single character as well as all characters.
+    Returns tuples of the most frequently used adjectives only used to describe one character.
+    As this only calls doctested functions I decided to skip the doctest for this function too.
+    """
+
+    unique_adjs = unique_adjectives(L, AllElse)
+    unique_freq_adj = frequency(unique_adjs)
+
+    return unique_freq_adj
+
 
 
 
@@ -132,12 +162,20 @@ if __name__ == '__main__':
 
     All_Names = ['meg', 'margaret', 'jo', 'josephine', 'beth', 'elizabeth', 'amy']
 
-    Meg = archetype(LW, All_Names[:2], All_Names[2:])
-    Jo = archetype(LW, All_Names[2:4], All_Names[:2] + All_Names[4:])
-    Beth = archetype(LW, All_Names[4:6], All_Names[:4] + All_Names[6:])
-    Amy = archetype(LW, All_Names[6:], All_Names[:6])
 
-    bar_graph(Meg, "Meg's Adjectives")
-    bar_graph(Jo, "Jo's Adjectives")
-    bar_graph(Beth, "Beth's Adjectives")
-    bar_graph(Amy, "Amy's Adjectives")
+    Meg_a = adj_finder(LW, All_Names[:2], All_Names[2:])
+    Jo_a = adj_finder(LW, All_Names[2:4], All_Names[:2] + All_Names[4:])
+    Beth_a = adj_finder(LW, All_Names[4:6], All_Names[:4] + All_Names[6:])
+    Amy_a = adj_finder(LW, All_Names[6:], All_Names[:6])
+    
+
+    Meg_u = frequency_unique_adjs(Meg_a, Jo_a + Beth_a + Amy_a)
+    Jo_u = frequency_unique_adjs(Jo_a, Meg_a + Beth_a + Amy_a)
+    Beth_u = frequency_unique_adjs(Beth_a, Meg_a + Jo_a + Amy_a)
+    Amy_u = frequency_unique_adjs(Amy_a, Meg_a + Jo_a + Beth_a)
+
+
+    bar_graph(Meg_u, "Meg's Unique Adjectives")
+    bar_graph(Jo_u, "Jo's Unique Adjectives")
+    bar_graph(Beth_u, "Beth's Unique Adjectives")
+    bar_graph(Amy_u, "Amy's Unique Adjectives")
