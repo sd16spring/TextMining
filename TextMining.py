@@ -4,9 +4,11 @@ Finds the relevant words associated with the main motifs in the novel
 @author: Kevin Guo
 """
 
+import matplotlib.pyplot as plt
 import pickle
 import re
 from pattern.web import *
+import nltk
 
 def pickle_files(text):
     """
@@ -19,6 +21,9 @@ def pickle_files(text):
 def create_dictionary(words):
     """
     Create a dictionary given a list of words
+    
+    >>> create_dictionary(['bug','bug','chess'])
+    {'bug': 2, 'chess': 1}
     """
     #initialize dictionary
     dictionary = dict()
@@ -154,6 +159,10 @@ def subtract_dictionaries(threshold):
                     del main_dictionary[x]
 
     return main_dictionary
+
+def plot_texts():
+    pass
+    # plt.show()
 
 if __name__ == '__main__':
     import doctest
