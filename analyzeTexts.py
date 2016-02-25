@@ -22,9 +22,14 @@ sentimentOfBooks = {}
 
 # runs the two things I want to see about the books
 def analysis(books):
+
+    cleanUpBooks(books)
+
+    print books['toHaveAndHold']
+
     for text in books:
         # sentimentOfBooks[text] = analyzeSentiment(books[text])
-        wordFreq[text] = findWordFrequency(books[text])
+        # wordFreq[text] = findWordFrequency(books[text])
 
     wordList = []
     temp = []
@@ -53,9 +58,24 @@ def analysis(books):
         newFile.write(str(wordList[k]))
         newFile.close()
 
-    # savedFile = open('results.txt', 'w')
-    # savedFile.write(str(sentimentOfBooks))
-    # savedFile.close()
+    savedFile = open('results.txt', 'w')
+    savedFile.write(str(sentimentOfBooks))
+    savedFile.close()
+
+
+# removes the gutenburg stuff at the beginning
+def cleanUpBooks(novels):
+    words = ''
+    for singleBook in novels:
+        words = novels[singleBook]
+        for index in xrange(5, len(words)):
+            if words[index-4: index] == ' ***':
+                novels[singleBook] = words[index:]
+                break
+        for index in xrange(1000, len(words)):
+            if words[index-27: index] == '*** START: FULL LICENSE ***':
+                novels[singleBook] = words[:index-27]
+                break
 
 
 # uses pattern to analyze the sentiments of the texts
