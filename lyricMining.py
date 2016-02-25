@@ -136,12 +136,15 @@ def getSongPages(artist, songList):
 		generates: unformatted song pages
 	"""
 
+	if not os.path.isdir('./{}/Songs'.format(artist)):
+		os.mkdir('./{}/Songs'.format(artist))
+
 	f = open(songList, 'r')
 	for song in f:
 		if '(' not in song and 'emix' not in song:
 
 			songName = formatSpaces(song)
-			fileName = './{}/{}.{}.txt'.format(artist, artist, songName)
+			fileName = './{}/Songs/{}.{}.txt'.format(artist, artist, songName)
 
 			if not os.path.isfile(fileName):
 			
@@ -193,6 +196,6 @@ def getArtistData(unformattedArtist):
 
 
 if __name__ == "__main__":
-	getArtistData('Broken Bells')
+	getArtistData('Among Savages')
 
 

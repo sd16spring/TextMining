@@ -1,28 +1,30 @@
+""" CODE FOR SOFTDES MINI PROJECT 3: TEXT MINING
+	SPRING 2016
+
+	ANALYZING SONG LYRICS FOR AN CHOSEN ARTIST
+
+	@author: Gaby Clarke
+
+"""
+
 import string
 import math
-import numpy as np
-import matplotlib.pyplot as plt
+import os
+from pattern.en import sentiment
+# import numpy as np
+# import matplotlib.pyplot as plt
 
-data = dict()
 
-def makeLyrics(fileName):
+def makeLyrics(artist, fileName):
 	""" 
 		returns: a list of strings of lines of lyrics
 	"""
-	f = open(fileName, 'r')
+	f = open('./{}/Songs/{}'.format(artist, fileName), 'r')
 	content = f.read()
 	content = content.split('\n')
 	content = [i for i in content if i != '' and i != 'Translate lyrics']
 	f.close()
 	return content
-
-def analyzeLyrics(fileName):
-	lyrics = makeLyrics(fileName)
-	dictionary = dict()
-	for i in lyrics:
-		words = cleanUpLyrics(i)
-		histogram(words, dictionary) # assign to a variable, or put into list?
-	print dictionary
 
 
 def cleanUpLyrics(s):
@@ -76,16 +78,96 @@ def cosineSimilarity(d1, d2):
 		return float(numerator) / denominator
 
 
-d1 = {'cat': 1, 'dog': 2, 'parrot': 2}
-d2 = {'cat': 1, 'dog': 2, 'rabbit': 1}
-d3 = {'rat': 1, 'dog': 3, 'parrot': 2}
-d4 = {'cat': 1, 'rabbit': 3, 'parrot': 2}
-d = {'d1': d1, 'd2': d2, 'd3': d3, 'd4': d4}
+def remapInterval(val, inputIntervalStart, inputIntervalEnd, outputIntervalStart, outputIntervalEnd):
+    """ Given an input value in the interval [inputIntervalStart,
+        inputIntervalEnd], return an output value scaled to fall within
+        the output interval [outputIntervalStart, outputIntervalEnd].
+
+        Function from ComputationalArt Project.
+
+        val: the value to remap
+        inputIntervalStart: the start of the interval that contains all
+                              possible values for val
+        inputIntervalEnd: the end of the interval that contains all possible
+                            values for val
+        outputIntervalStart: the start of the interval that contains all
+                               possible output values
+        outputIntervalEnd: the end of the interval that contains all possible
+                            output values
+        returns: the value remapped from the input to the output interval
+        >>> remapInterval(0.5, 0, 1, 0, 10)
+        5.0
+        >>> remapInterval(5, 4, 6, 0, 2)
+        1.0
+        >>> remapInterval(5, 4, 6, 1, 2)
+        1.5
+    """
+    inputDelta = inputIntervalEnd - inputIntervalStart
+    inputPosition = float(val - inputIntervalStart) / inputDelta
+    outputDelta = outputIntervalEnd - outputIntervalStart
+    outputPosition = outputIntervalStart + (inputPosition * outputDelta)
+    return outputPosition
+
+
+def analyzeLyrics(artist, fileName):
+	lyrics = makeLyrics(artist, fileName)
+	dictionary = dict()
+	index = 0
+	for i in lyrics:
+		# words = cleanUpLyrics(i)
+		# histogram(words, dictionary) # assign to a variable, or put into list?
+		dictionary[index] = sentiment(i)[0]
+		index += 1
+	return averageSongSentiment(dictionary)
+
+
+def analyzeAllLyrics(artist):
+	# content = makeLyrics('./Broken-Bells/Broken-Bells.Vaporize.txt')
+	# print content
+	# print sentiment(content[0])
+	# one = analyzeLyrics('./Broken-Bells/Broken-Bells.Vaporize.txt')
+	# two = analyzeLyrics('./Broken-Bells/Broken-Bells.Windows.txt')
+	# print one
+
+	# # print averageSongSentiment(one), averageSongSentiment(two)
+	dictionary = dict()
+	files = [f for f in os.listdir('./{}/Songs'.format(artist)) if '.txt' in f]
+	print files
+	for file in files:
+		polarity = analyzeLyrics(artist, file)
+		dictionary[file] = remapInterval(polarity, -1, 1, 0, 1)
+
+	print dictionary
+
+	# print cosineSimilarity(one, two)
+
+
+
+
+
+def averageSongSentiment(d):
+	avg = sum(d.values()) / len(d)
+	return avg
+
+
+def averageArtistSentiment():
+	pass
+
+
+# d1 = {'cat': 1, 'dog': 2, 'parrot': 2}
+# d2 = {'cat': 1, 'dog': 2, 'rabbit': 1}
+# d3 = {'rat': 1, 'dog': 3, 'parrot': 2}
+# d4 = {'cat': 1, 'rabbit': 3, 'parrot': 2}
+# d = {'d1': d1, 'd2': d2, 'd3': d3, 'd4': d4}
+
+# d5 = {1: (0.0), 2: (1,5)}
+# d6 = {1: (0.0), 2: (1,5)}
 
 
 if __name__ == "__main__":
-	analyzeLyrics('The-High-Road.txt')
-	# print cosineSimilarity(d1,d2)
+	# analyzeLyrics('The-High-Road.txt')
+	analyzeAllLyrics('Broken-Bells')
+	# print cosineSimilarity(d5,d6)
 
 
 # r = np.arange(0, 3.0, 0.01)
