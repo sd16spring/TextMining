@@ -58,60 +58,6 @@ def pickle_book(filename):
     dump(text,f)
     f.close()
 
-def clean_pride_and_prejudice_words(filename = 'pride_and_prejudice_full_text.pickle'):
-    """
-    Given I have the copy of Pride and Prejudice available from Project Gutenberg
-    (http://www.gutenberg.org/cache/epub/1342/pg1342.txt)
-    downloaded and pickled, this function does the following:
-    -Splits the book into a list of chapters
-    -Removes beginning and end boilerplate text
-    -Makes all words lowercase
-    -Replaces punctuation with spaces
-    -Splits chapters into lists of words
-    -Pickles text again, adding 'clean'
-
-    There's a mirror available at http://www.gutenberg.lib.md.us/1/3/4/1342/1342.txt
-
-    I ended up not actually using the book split into words.
-
-    >>> clean_pride_and_prejudice_words('a.pickle')
-    >>> f = open('a_clean_words.pickle')
-    >>> text = load(f)
-    >>> f.close()
-    >>> print text[0][0],text[0][1],text[0][2],text[0][3],text[0][4],text[0][5]
-    it is a truth universally acknowledged
-    """
-    f = open(filename,'r')
-    text = load(f)
-    f.close()
-
-    #"Chapter" only occurs at the beginning of chapters, so this is fine
-    chapter_list = text.split('Chapter')
-    #Removes everything before the first real chapter
-    chapter_list.pop(0)
-
-    #Remove the ending Project Gutenberg text
-    ending_index = chapter_list[-1].index('End of the Project')
-    chapter_list[-1] = chapter_list[-1][:ending_index]
-
-    #Replace all punctuation with spaces
-    #Case correct
-    #Split chapter into list of words
-    #Remove first "word" (it's the chapter number)
-    clean_chapters = []
-    #removes apostrophes from string.punctuation
-    translation_table = string.maketrans(string.punctuation[:6]+string.punctuation[7:],' '*(len(string.punctuation)-1))
-    for chapter in chapter_list:
-        new_chapter = chapter.translate(translation_table)
-        new_chapter = new_chapter.lower()
-        new_chapter = new_chapter.split()
-        new_chapter = new_chapter[1:]
-        clean_chapters.append(new_chapter)
-
-    f = open(filename[:-7] + '_clean_words' + filename[-7:],'w')
-    dump(clean_chapters,f)
-    f.close()
-
 def clean_pride_and_prejudice_sentences(filename = 'pride_and_prejudice_full_text.pickle'):
     """
     Given I have the copy of Pride and Prejudice available from Project Gutenberg
@@ -242,25 +188,6 @@ def sentiment_difference_plot():
     plt.xlabel("Chapters")
     plt.ylabel("Corrected Darcy Sentiment")
     plt.show()
-
-def word_histogram(text):
-    """
-    Takes in a list of words text, returns a dictionary whose keys are the words
-    that appear in text, and whose values are the frequency of those words
-    
-    I thought I might use this, but I ended up not.
-
-    Doctests are hard because dictionaries are random. But let's try this
-    >>> word_histogram(['a','a','a','b','b'])['a']
-    3
-    >>> word_histogram(['boogeyman','boogeyman'])['boogeyman']
-    2
-    """
-    d = {}
-    for word in text:
-        d[word] = d.get(word,0) + 1
-    return d
-        
 
 if __name__ == '__main__':
     """
