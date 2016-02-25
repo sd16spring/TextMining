@@ -2,6 +2,9 @@
 This project takes a formatted Facebook message dump, messages.htm, scrapes it
 for the most frequent words in a message thread I specified, and then
 returns a word cloud of the most popular words in the thread.
+
+I opted out of unit tests for BeautifulSoup things because the way it does data
+types is difficult and confusing. 
 """
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
