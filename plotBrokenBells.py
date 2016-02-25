@@ -54,13 +54,13 @@ def plot(artist):
 		theta = index * deltaTheta
 
 		if song in BrokenBells:
-			bb = scatter(theta, r, s=100, c=palevioletred, linewidth=0, label='Broken Bells')
+			bb = scatter(theta, r, s=100, c=palevioletred, linewidth=0, label='Broken Bells (2010)')
 		elif song in MeyrinFields:
-			mf = scatter(theta, r, s=100, c=mediumaquarmarine, linewidth=0, label='Meyrin Fields')
+			mf = scatter(theta, r, s=100, c=mediumaquarmarine, linewidth=0, label='Meyrin Fields (2011)')
 		elif song in AfterTheDisco:
-			atd = scatter(theta, r, s=100, c=darkmagenta, linewidth=0, label='After The Disco')
+			atd = scatter(theta, r, s=100, c=darkmagenta, linewidth=0, label='After The Disco (2014)')
 		elif song in ItsThatTalkAgain:
-			itta = scatter(theta, r, s=100, c=dodgerblue, linewidth=0, label="It's That Talk Again")
+			itta = scatter(theta, r, s=100, c=dodgerblue, linewidth=0, label="It's That Talk Again (2015)")
 		
 		index += 1
 
