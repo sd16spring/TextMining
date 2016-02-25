@@ -1,0 +1,8 @@
+from pattern.web import *
+import os
+import pickle
+import anybdm
+
+f = Facebook(licence='CAAEuAis8fUgBAJQKS4ZBRUsxIRlsrW76PcYITJRC5hAoFmhYCyZBWDQc7NLFHtRABcRemTZA6YWByo12xL6ZB8gttBA4lDABIQI8fIcq9Eroaq2VRPoW8ZAPzarU1y7ZBL34eeYYO9TRNcpnMJsVrCN2gZAJICRcnCM5YsDZCXTANkNJSxD0sJw3kuoTGmYourEZD')
+me = f.profile()
+print me
