@@ -3,12 +3,15 @@ Finds the relevant words associated with the main motifs in the novel
 
 @author: Kevin Guo
 """
-
+from pattern.en import *
 import matplotlib.pyplot as plt
 import pickle
 import re
 from pattern.web import *
 import nltk
+from nltk.corpus import wordnet as wn
+import numpy as np
+
 
 def pickle_files(text):
     """
@@ -160,11 +163,78 @@ def subtract_dictionaries(threshold):
 
     return main_dictionary
 
-def plot_texts():
-    pass
-    # plt.show()
+def motif_sentiment(lst):
+    """
+    Unused code which returns sentiments of individual words
+    """
+    sentiment_dictionary = dict()
+    for word in lst:
+        sentiment_dictionary[word] = sentiment(word)
+    return sentiment_dictionary
+
+def plot_texts(dictionary):
+    """
+    Plots the words in a bar graph in order of frequency for easier visualization
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    ## the data
+    N = len(dictionary)
+    tup = []
+    lstx = []
+    lsty = []
+
+    #sort words by frequency
+    for x,y in dictionary.items():
+        tup.append((y,x))
+    tup.sort(reverse=True)
+
+    for y,x in tup:
+        lstx.append(x)
+        lsty.append(y)
+
+    ## necessary variables
+    ind = np.arange(N)                # the x locations for the groups
+    width = 0.35                     # the width of the bars
+
+    ## the bars
+    rects1 = ax.bar(ind, lsty, width, color='blue')
+    # # axes and labels
+    ax.set_xlim(-width,len(ind)+width)
+    ax.set_ylim(0,200)
+    ax.set_ylabel('Frequency')
+    ax.set_title('Frequency of most common themes')
+    ax.set_xticks(ind+width)
+    xtickNames = ax.set_xticklabels(lstx)
+    plt.setp(xtickNames, rotation=90, fontsize=8)
+
+    plt.show()
 
 if __name__ == '__main__':
     import doctest
     # doctest.testmod()
-    print alphabetical(subtract_dictionaries(1.0))
+    motifs =  subtract_dictionaries(1.0)
+    plot_texts(motifs)
+    # print motif_sentiment(motifs)
+    # word = wn.synset('beer.n.01')
+    # print word.hypernyms()
+
+    # print sentiment(motifs)
+    # plot_texts(motifs)
+    # print alphabetical(subtract_dictionaries(1.0))
+
+
+    #Test code for natural language processing
+    # a = alphabetical(subtract_dictionaries(1.0))
+    # print a
+    # text = nltk.Text(a)
+    # text = nltk.Text(word.lower() for word in nltk.corpus.brown.words())
+    # print text
+
+
+    # temp = dict()
+    # for i in range(len(a)):
+    #     for j in range(len(a)-i):
+    #         if(text.similar(dict[i])
+    # print text.similar('gold')
