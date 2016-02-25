@@ -1,6 +1,5 @@
 """
-YOUR HEADER COMMENT HERE
-Ideas: compare word frequancy, compare tone/positivity, compare word length.
+This compares word frequancy, tone, word length, and the amount of unique words.
 
 
 @author: Lauren Pudvan
@@ -39,10 +38,10 @@ def word_frequency(book):
     Then it sorts the dictionary from lovest to highest values (words that occure most are at the end)
     Then it returns the dictionary.
     >>> word_frequency('DocTesting.txt')
-    [('a', 1), ('used', 1), ('for', 1), ('This', 1), ('doc', 1), ('is', 1), ('testing', 1)]
+    [('used', 1), ('for', 1), ('This', 1), ('doc', 1), ('is', 1), ('testing', 1)]
     """
-    f = open(book,'r')
-    wordcount={}
+    f = open(book,'r') # sets f equal to a sting of the book
+    wordcount={} # new dictionary
     for word in f.read().split():
         if word not in wordcount:
             wordcount[word] = 1
@@ -52,13 +51,22 @@ def word_frequency(book):
     sorted_wordcount = sorted(wordcount.items(), key=operator.itemgetter(1))
     return sorted_wordcount
 
+def amount_of_independent_words(book): # The amount of unique words not counting repetition.
+    """ This takes the dictionary result from the word frequancy function and returns the length of that dictionary.
+    The length of that dictionary is the number of original words.
+    >>> amount_of_independent_words('DocTesting.txt')
+    6
+    """
+    dictOfWords = word_frequency(book)
+    return len(dictOfWords)
+
 def average_word_length(book):
     """ This will append a list with the length of each word then take the avarage of the list.
     This gives the average word length.
     >>> average_word_length('DocTesting.txt')
-    3.4285714285714284
+    3.8333333333333335
     """
-    f = open(book,'r')
+    f = open(book,'r') # sets f equal to a sting of the book
     wordLenths = []
     for word in f.read().split():
         length = len(word)
@@ -70,7 +78,7 @@ def tone(book):
     """ This takes in a string and returns (positive sentiment polarity)
     I do not know how to predict a doctest for this because i do not know the specifics for how to predict the result of sentiment.
     """
-    b = open(book,'r')
+    b = open(book,'r') # sets b equal to a sting of the book
     b.read()
     sent = sentiment(file)
     b.close()
@@ -82,13 +90,17 @@ def tone(book):
 #     doctest.testmod()
 
 print word_frequency('TheVeryHungryCatipillar.txt')
+print amount_of_independent_words('TheVeryHungryCatipillar.txt')
 print average_word_length('TheVeryHungryCatipillar.txt')
 print tone('TheVeryHungryCatipillar.txt')
+
 print word_frequency('TheGivingTree.txt')
+print amount_of_independent_words('TheGivingTree.txt')
 print average_word_length('TheGivingTree.txt')
 print tone('TheGivingTree.txt')
+
+
 print word_frequency('TheTaleOfPeterRabbitClean.txt')
+print amount_of_independent_words('TheTaleOfPeterRabbitClean.txt')
 print average_word_length('TheTaleOfPeterRabbitClean.txt')
 print tone('TheTaleOfPeterRabbitClean.txt')
-
-
