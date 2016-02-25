@@ -45,37 +45,37 @@ def cleanUpLyrics(s):
 	return wordList
 
 
-def histogram(wordList, d):
-	""" takes a list of words and returns a dictionary with each word as a key to the number
-		of times the word appears in the list
+# def histogram(wordList, d):
+# 	""" takes a list of words and returns a dictionary with each word as a key to the number
+# 		of times the word appears in the list
 
-		wordList: a list of words
-		d: dictionary to store histogram in
-		returns: dictionary (word and frequency)
-	"""
+# 		wordList: a list of words
+# 		d: dictionary to store histogram in
+# 		returns: dictionary (word and frequency)
+# 	"""
 
-	for word in wordList:
-		d[word] = d.get(word, 0) + 1
-	return d
+# 	for word in wordList:
+# 		d[word] = d.get(word, 0) + 1
+# 	return d
 
 
-def cosineSimilarity(d1, d2):
-	""" adapted from http://stackoverflow.com/questions/15173225/how-to-calculate-cosine-similarity-given-2-sentence-strings-python
+# def cosineSimilarity(d1, d2):
+# 	""" adapted from http://stackoverflow.com/questions/15173225/how-to-calculate-cosine-similarity-given-2-sentence-strings-python
 
-		d1, d2: dictionaries of lyrics characterized by word frequencies
-	"""
+# 		d1, d2: dictionaries of lyrics characterized by word frequencies
+# 	"""
 
-	intersection = set(d1.keys()) & set(d2.keys())
-	numerator = sum([d1[i] * d2[i] for i in intersection])
+# 	intersection = set(d1.keys()) & set(d2.keys())
+# 	numerator = sum([d1[i] * d2[i] for i in intersection])
 
-	sum1 = sum([d1[i]**2 for i in d1.keys()])
-	sum2 = sum([d2[i]**2 for i in d2.keys()])
-	denominator = math.sqrt(sum1) * math.sqrt(sum2)
+# 	sum1 = sum([d1[i]**2 for i in d1.keys()])
+# 	sum2 = sum([d2[i]**2 for i in d2.keys()])
+# 	denominator = math.sqrt(sum1) * math.sqrt(sum2)
 
-	if not denominator: # if denominator == 0, we divide by 0
-		return 0.0
-	else:
-		return float(numerator) / denominator
+# 	if not denominator: # if denominator == 0, we divide by 0
+# 		return 0.0
+# 	else:
+# 		return float(numerator) / denominator
 
 
 def remapInterval(val, inputIntervalStart, inputIntervalEnd, outputIntervalStart, outputIntervalEnd):
@@ -118,56 +118,69 @@ def analyzeLyrics(artist, fileName):
 		# histogram(words, dictionary) # assign to a variable, or put into list?
 		dictionary[index] = sentiment(i)[0]
 		index += 1
-	return averageSongSentiment(dictionary)
+	return averageSentiment(dictionary)
 
 
-def analyzeAllLyrics(artist):
-	# content = makeLyrics('./Broken-Bells/Broken-Bells.Vaporize.txt')
-	# print content
-	# print sentiment(content[0])
-	# one = analyzeLyrics('./Broken-Bells/Broken-Bells.Vaporize.txt')
-	# two = analyzeLyrics('./Broken-Bells/Broken-Bells.Windows.txt')
-	# print one
+def averageSentiment(d):
+	""" takes a dictionary and returns average of dictionary values
 
-	# # print averageSongSentiment(one), averageSongSentiment(two)
-	dictionary = dict()
-	files = [f for f in os.listdir('./{}/Songs'.format(artist)) if '.txt' in f]
-	print files
-	for file in files:
-		polarity = analyzeLyrics(artist, file)
-		dictionary[file] = remapInterval(polarity, -1, 1, 0, 1)
-
-	print dictionary
-
-	# print cosineSimilarity(one, two)
-
-
-
-
-
-def averageSongSentiment(d):
+		d: a dictionary
+		returns: average of dictionary values
+	"""
 	avg = sum(d.values()) / len(d)
 	return avg
 
 
-def averageArtistSentiment():
-	pass
+# def averageArtistSentiment(d):
+# 	""" takes a dictionary of form song : averageSongSentiment and finds the average
+# 		sentiment for all songs by the artist
+
+# 		d: dictionary of song sentiments
+# 		returns: average sentiment
+# 	"""
+
+# 	pass
 
 
-# d1 = {'cat': 1, 'dog': 2, 'parrot': 2}
-# d2 = {'cat': 1, 'dog': 2, 'rabbit': 1}
-# d3 = {'rat': 1, 'dog': 3, 'parrot': 2}
-# d4 = {'cat': 1, 'rabbit': 3, 'parrot': 2}
-# d = {'d1': d1, 'd2': d2, 'd3': d3, 'd4': d4}
+def analyzeAllLyrics(artist):
+	songs = dict()
+	files = [f for f in os.listdir('./{}/Songs'.format(artist)) if '.txt' in f]
+	for file in files:
+		songName = file.split('.')[1]
+		polarity = analyzeLyrics(artist, file)
+		songs[songName] = remapInterval(polarity, -1, 1, 0, 1)
 
-# d5 = {1: (0.0), 2: (1,5)}
-# d6 = {1: (0.0), 2: (1,5)}
+	data = dict()
+	data['songs'] = songs
+	data[artist] = averageSentiment(songs)
+
+	return data
+
+
+def compare(artist, d):
+	avg = d.get(artist)
+	print avg
+	songs = d.get('songs')
+	comparison = dict()
+
+	for song in songs:
+		comparison[song] = abs(avg - songs.get(song))
+
+	return comparison
+
+
+def plot(artist):
+	data = analyzeAllLyrics(artist)
+	print compare(artist, data)
+
+
+
+
 
 
 if __name__ == "__main__":
-	# analyzeLyrics('The-High-Road.txt')
-	analyzeAllLyrics('Broken-Bells')
-	# print cosineSimilarity(d5,d6)
+	# analyzeAllLyrics('Broken-Bells')
+	plot('Broken-Bells')
 
 
 # r = np.arange(0, 3.0, 0.01)
