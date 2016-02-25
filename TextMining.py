@@ -1,5 +1,5 @@
 """
-TextMining.py downloads a copy of Little Women and counts the words used most frequently to describe each of the four main characters.
+TextMining.py counts the adjectives (as determined by Pattern, which is a bit iffy) used most frequently to describe each of the four main characters in Little Women
 
 Software Design 2016 - Olin College of Engineering
 
@@ -7,27 +7,20 @@ Software Design 2016 - Olin College of Engineering
 """
 from pattern.web    import*
 from pattern.search import search
-from pattern.en     import parsetree
-import string 
+from pattern.en     import parsetree 
 import pickle
-
-""" Download, Cleans, and Saves the Text
-LittleWomenURL = URL('http://gutenberg.readingroo.ms/5/1/514/514.txt').download()
-LittleWomen = plaintext(LittleWomenURL)
-
-exclude = set(string.punctuation)
-LittleWomen = ''.join(ch for ch in LittleWomen if ch not in exclude)
-LittleWomen = LittleWomen.lower()
-print LittleWomen
-
-f = open('LittleWomenWorking.txt', 'w')
-f.write(LittleWomen.encode('UTF-8'))
-f.close()
-"""
 
 
 def surrounding_words(L, Names, Wrongs):
-    """Returns lists of words surrounding the mention of a name only if no other character names are mentioned"""
+    """Returns lists of words surrounding the mention of a name only if no other character names are mentioned
+
+    >>> surrounding_words(['one', 'short', 'day', 'in', 'the', 'emerald', 'city'], ['kristin', 'idina'], ['bob'])
+    []
+    >>> surrounding_words(['sharing', 'one', 'wonderful', 'one', 'short', 'day', 'the', 'wizard', 'will', 'see', 'you', 'edna'], ['idina', 'edna'], ['kristin', 'chrystal'])
+    [['one', 'wonderful', 'one', 'short', 'day', 'the', 'wizard', 'will', 'see', 'you']]
+    >>> surrounding_words(['sharing', 'one', 'wonderful', 'one', 'short', 'day', 'the', 'wizard', 'will', 'see', 'kristin', 'idina'], ['edna', 'idina'], ['kristin', 'chrystal'])
+    []
+    """
 
     
     name_mentions = []
@@ -44,7 +37,13 @@ def surrounding_words(L, Names, Wrongs):
     
 
 def adjectives(L):
-    """Returns lists of adjecives present in input lists"""
+    """Returns lists of adjecives present in input lists.
+
+    >>> adjectives([['big', 'white', 'tall', 'dog'], ['bat', 'tall']])
+    ['big', 'white', 'tall', 'tall']
+    >>> adjectives([['march'], ['yes', 'i', 'know', 'its', 'almost', 'march']])
+    []
+    """
 
     adjs = []
     for l in range(len(L)):
@@ -57,7 +56,13 @@ def adjectives(L):
 
 
 def frequency(L):
-    """Returns tuples of words and their frequency in input lists"""
+    """Returns tuples of adjectives and their frequency in input lists.
+
+    >>> frequency(['potatoe', 'potatoe', 'potatoe'])
+    [(3, 'potatoe')]
+    >>> frequency([])
+    []
+    """
 
     freq = {}
     for l in L:
@@ -75,7 +80,9 @@ def frequency(L):
 
 
 def archetype(L, N, W):
-    """Takes the text of a book, a character's name, and the names of other characters.  Returns tuples of the most commonly used adjectives to describe the character"""
+    """Takes the text of a book, a character's name, and the names of other characters. 
+    Returns tuples of the most commonly used adjectives to describe the character.
+    As the this only calls three doctested functions I decided to skip a doctest for this function."""
 
     Mentions = surrounding_words(L, N, W)
     Adjectives = adjectives(Mentions)
@@ -84,21 +91,20 @@ def archetype(L, N, W):
     return Freq_Adjectives
 
 
-LW = (open('LittleWomenCleaned.txt', 'r').read()).split()
 
-All_Names = ['meg', 'margaret', 'jo', 'josephine', 'beth', 'elizabeth', 'amy']
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+      
+    LW_load = (open('LittleWomen.pickle', 'r'))
+    LW = pickle.load(LW_load)
+    LW = LW.split()
 
-Meg = archetype(LW, All_Names[:2], All_Names[2:])
+    All_Names = ['meg', 'margaret', 'jo', 'josephine', 'beth', 'elizabeth', 'amy']
 
+    Meg = archetype(LW, All_Names[:2], All_Names[2:])
+    Jo = archetype(LW, All_Names[2:4], All_Names[:2] + All_Names[4:])
+    Beth = archetype(LW, All_Names[4:6], All_Names[:4] + All_Names[6:])
+    Amy = archetype(LW, All_Names[6:], All_Names[:6])
 
-
-
-
-# """ This Pickles Stuff
-# f_BleakHouse = open('BleakHouseDownload.pickle','w')
-# pickle.dump(BleakHouseDownload,f_BleakHouse)
-# f_BleakHouse.close()
-
-# BleakHouse_input = open('BleakHouseDownload.pickle','r')
-# reloaded_BleakHouse = pickle.load(BleakHouse_input)
-# """
+  
