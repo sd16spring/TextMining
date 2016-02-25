@@ -52,7 +52,7 @@ def pickle_book(filename):
     text = f.read()
     f.close()
 
-    #remove the .txt extension
+    #remove the .txt extension and replace with .pickle
     pickle_filename = filename[:-4] + '.pickle'
     f = open(pickle_filename,'w')
     dump(text,f)
@@ -83,6 +83,7 @@ def clean_pride_and_prejudice_sentences(filename = 'pride_and_prejudice_full_tex
 
     #"Chapter " only occurs at the beginning of chapters, so this is fine
     chapter_list = text.split('Chapter ')
+
     #Removes everything before the first real chapter
     chapter_list.pop(0)
 
@@ -123,14 +124,13 @@ def keyword_sentiment_list(keyword = 'Mr. Darcy',filename = 'pride_and_prejudice
     for chapter in chapter_list_sentences:
         sentences = []
         for sentence in chapter:
-            #To check all sentences with keyword:
+            #Catch both Mr. Darcy and Mr. Darcy over a linebreak
             if keyword in sentence or keyword.replace(' ','\r\n') in sentence:
-
-            # To check just dialogue:
-            # if '"' in sentence and (keyword in sentence or keyword.replace(' ','\r\n') in sentence):
                 sentences.append(sentence)
-                if sentiment(sentence)[0] > 0.5 or sentiment(sentence)[0] < -0.5:
-                    print sentence, str(sentiment(sentence)[0]) + "\n\n\n"
+
+                #Debugging
+                # if sentiment(sentence)[0] > 0.5 or sentiment(sentence)[0] < -0.5:
+                #     print sentence, str(sentiment(sentence)[0]) + "\n\n\n"
 
         # print len(sentences)
         if len(sentences) > 0:
@@ -194,7 +194,6 @@ if __name__ == '__main__':
     Only run these as needed!
     doctests and get_book require a connection to the internet
     (and can lock you out of gutenberg if you do them too much)
-    pickle_book and clean_pride_and_prejudice just take a while to run
     """
 
     # import doctest
@@ -202,6 +201,5 @@ if __name__ == '__main__':
     
     #get_book('pride_and_prejudice_full_text.txt','http://www.gutenberg.org/cache/epub/1342/pg1342.txt')
     #pickle_book('pride_and_prejudice_full_text.txt')
-    #clean_pride_and_prejudice_words()
     #clean_pride_and_prejudice_sentences()
     sentiment_difference_plot()
