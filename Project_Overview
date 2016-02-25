@@ -1,0 +1,18 @@
+	Project Overview
+I am looking at comments from a particular reddit (it happens to be me staring in the sould of the front page, but could work anywhere). I apply sentiment analysis on every comment while keeping the overarching structure, meaning I can look at how a comment's sentiment relates to that of the replies. I was curious to see how the correlation would hold: on one hand, people love agreeing on reddit, on the other they love disagreeing as well.
+
+	Implementation
+As you might expect, it's a two step process. Firstly, in GetPageComments.py, I extract the comments (contained in a forest) from a certain page using praw and export them into a file using JSON, while ignoring the "MoreComments" objects. In that process, I am also turning the praw.objects.comment class into a dictionary (partly because JSON won't take amy class). Then, in sentimentTree.py, I import that file and proceed to perform sentiment analysis on each comment using pattern.en. I am also calculating the average sentiment across each comment's replies. 
+
+Said like that, it might not seem like no big dea. But here's where things get fun. I'd love to say using JSON over Pickle was a design decision, but that's not the case. I'm using Python 3 to get praw to work (2.7.6 doesn't have the https security), however, pattern.en does not work with Python 3. Therefor, sentimentTree.py is run using Python 2. Pickle apparently is not a fan of being encoded and decoded in different versions. JSON is slightly more free spirited and allows that more smoothely. Figuring this out took a couple hours. 
+
+The idea being converting the praw.objects.comments into dictionaries was that it could still behave just like a class (for all intents and purposes). I was mainly interested in tracking the comment body, the sentiment associated with it, the average sentiment associated to its comments, and its comments. Those are stored in a list and are, of course, similar dictionaries. This implies a tree-like structure, which allowed me to do most of my code recursively. 
+
+	Results
+The first interesting thing is how often the pattern.en's sentiment analysis returns 0. I'm not sure what the sentiment number is actually based on (their website is down), so  simplpy discarded those. Otherwise, the results are somewhat anticlimactic: there are 15 instances in which the commenters are repliers "agree" for 20 instances where they "dsagree". That's not a significant gap, so more analysis would need to take place. The framework to do this is in place, so I don't feel to bad about not implementing it right now. It is also important to note that there are 165 unusable cases in this thread. 
+
+Beyond that, the more simplistic analysis tells me that Reddit likes me a bit (sentiment analysis provides an average of 0.27), and that they use a lot of particles and prepositions. 
+
+	Reflection
+What a process. This was quite frustrating because I knew what I wanted to do and how to do it most of the time, but I was stuck on non interesting Python and library issues; mainly getting libraries to work with the correct version. 
+The nice thing though is once I was able to code the sentiment analysis, it went pretty smoothely. The recursive definition had an implied stopping condition, and dealing with the dictionaries was fairly straightforward. So the logic itself was a lot of fun, banging my head on various surfaces to get libraries to work was not so much. 
