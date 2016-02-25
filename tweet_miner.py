@@ -1,3 +1,5 @@
+"""Scrapes tweets from Twitter and svaes the results in a dictionary that is the pickled"""
+
 from pattern.en import *
 from pattern.web import Twitter
 import pickle

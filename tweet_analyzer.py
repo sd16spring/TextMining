@@ -1,3 +1,4 @@
+"""Determines the sentiment of tweets for given weather conditions and plots them on a scatter plot"""
 import pickle
 from pattern.en import *
 import numpy as np
