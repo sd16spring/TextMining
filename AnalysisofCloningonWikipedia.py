@@ -61,3 +61,5 @@ def search_neg_pos (article_names, negative_search_words, positive_search_words)
 		print '\n'
 
 search_neg_pos(search_terms, negative_searchable_words, positive_searchable_words)
+
+doctest.testmod()
