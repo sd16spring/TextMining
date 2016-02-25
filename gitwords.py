@@ -13,6 +13,10 @@ import operator
 
 # get_data()
 def get_data():
+    '''
+    This function takes a CSV of all the data recorded by github about pull request comments
+    and writes a file 'gittext' with only the text of the comments
+    '''
     i = 0
     f = open('gittext', 'w')
     reader = csv.reader(open('./pull_request_comments.csv', 'rU'), delimiter=',')
@@ -24,6 +28,10 @@ def get_data():
                 f.write(column)
 # get_data()
 def count_words():
+    '''
+    This file takes the gittext file containing all of the pull request comments 
+    and dumps a pickle of the a dictionary containing the wordcount of every word
+    '''
         text = open('./gittext','r').read()
         text = string.lower(text)
         for ch in '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~':
@@ -45,6 +53,10 @@ def count_words():
 
 #count_words()
 def sort_dict():
+    '''
+    This function sorts the dictionary by word count from greatest to least.
+    In the command line, when called, it is piped into a file that will be processed for analysis.
+    '''
     inf = open('./wordcount', 'r')
     data = pickle.load(inf)
     sorted_data = sorted(data.items(), key=operator.itemgetter(1), reverse = True)
