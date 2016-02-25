@@ -9,25 +9,18 @@ r = praw.Reddit('Comment Scraper 1.0 by u/TheMattgican') # initialize PRAW
 submissions = r.get_submission(submission_id='3zad6j')  # get submissions
 
 
-# # Get Flat Comments in a File
-# flat_comments = praw.helpers.flatten_tree(submissions.comments)	# Get all comments as an unordered list
+# Get Flat Comments in a File
+flat_comments = praw.helpers.flatten_tree(submissions.comments)	# Get all comments as an unordered list
 
-# file = open('redditComments.txt', 'w')
+file = open('redditComments.txt', 'w')
 
-# for comment in flat_comments:
-# 	if type(comment) != praw.objects.MoreComments:
-# 		file.write(comment.body + 'DELIM\n')
+for comment in flat_comments:
+	if type(comment) != praw.objects.MoreComments:
+		file.write(comment.body + 'DELIM\n')
 
-# file.close()
+file.close()
 
 
-# # Get a pickle file that contains a forest of commnts
-# import pickle
-# commentTrees = submissions.comments
-
-# file = open('redditCommentTrees.pickle', 'wb')
-# pickle.dump(commentTrees, file, protocol = 2) # Use protocole 2 because the analysis is done in Python 2.7.6
-# file.close()
 
 import json
 
