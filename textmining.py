@@ -51,6 +51,10 @@ def sort_hist(dictionary):
 	"""
 		>>> sort_hist({"bought":1,"sold":5, "created":3})
 		[('bought', 1), ('created', 3), ('sold', 5)]
+		>>> sort_hist({})
+		[]
+		>>> sort_hist({"two":2,"one":1})
+		[('one', 1), ('two', 2)]
 	"""
 	histlist = dictionary.items()
 	return sorted(histlist, key = lambda tuple: tuple[1])
