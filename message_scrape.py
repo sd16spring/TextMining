@@ -8,6 +8,7 @@ from wordcloud import WordCloud
 import string
 import sys
 
+
 def get_msgs(filename, threadname):
     """
     This function takes a filename object that is the entire message dump
@@ -43,10 +44,12 @@ def get_freq(text):
     This function makes a frequency dictionary of all of the words it's given
     """
     words = dict()
+    total_words = 0
     for raw in text.split():
-         word = raw.rstrip(string.punctuation).lstrip(string.punctuation).lower()
-         words[word] = words.get(word, 0) + 1
-    return words
+        total_words += 1
+        word = raw.rstrip(string.punctuation).lstrip(string.punctuation).lower()
+        words[word] = words.get(word, 0) + 1
+    return words, total_words
 
 def decorate_sort(dictionary):
     """
@@ -76,9 +79,10 @@ if __name__ == '__main__':
         print "Probably a libfreetype error again"
 
     # Generate sorted frequency list
-    freq = get_freq(text)
+    freq, total = get_freq(text)
     freq = decorate_sort(freq)
 
-    print 'The {} most used words in our chat are: '.format(words)
+    print 'Of {} total words in the chat,'.format(total)
+    print 'the {} most used words in our chat are: '.format(words)
     string_freq = [str(e) for e in freq]
     print "\n".join(string_freq[:words])
