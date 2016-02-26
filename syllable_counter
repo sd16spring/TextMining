@@ -1,0 +1,66 @@
+from pattern.en import tokenize
+
+def syllable_counter(string):
+	""" Takes a word, and evaluates (roughly)
+		the number of syllables it contains.
+		This function returns number of syllables
+		There must be a space after the string,
+		otherwise it will break
+		>>> syllable_counter('mouse ')
+		1
+		>>> syllable_counter('a ')
+		1
+	"""
+	i = 0 # index of while loop 
+	counter = 0 # counter of syllables
+	vowels = ['a','e','i','o','u','y','e '] # what are vowels
+	diphthongs = ['ee', 'ei', 'ea', 'oo', 'oi', 'oy', 'ou', 'ai', 'ie'] #what are diphthongs
+	index = 0 
+
+	while string[index] != ' ': # break at space
+		char = string[index] # look at each letter in string
+		next_char = string[index+1] # and the letter following
+
+		if char in vowels: 
+			if (char + next_char in diphthongs): 
+				counter = counter + 1 # count
+				index = index + 1 # skips second letter in diphthong
+			elif (char == 'e' and next_char == ' '): # assume if e at end of word, is not syllable
+				pass # don't count
+			else: 
+				counter = counter + 1 # if it's a solitary vowel, add one to counter
+
+		index = index + 1
+
+	return counter
+
+def sentance_strip(text):
+	#remove junk
+	#junk is puncturation 
+	# and 
+
+
+def sentance_eval(sentance):
+	""" Takes a sentance, and evaluates
+		the number of syllables contained in 
+		each word. This function returns number of syllables
+		There must be a space after the string,
+		otherwise it will break
+		>>> sentance_eval('Im a mouse ')
+		3
+		>>> syllable_counter('She is alone ')
+		4
+	"""
+	sentance_as_list = sentance.split()  # make list of strings (words) 
+	sentance = [word + ' ' for word in sentance_as_list] #now with spaces so it works in syllable_counter
+	counter = 0
+	for word in sentance:
+		counter += syllable_counter(word) 
+	return counter
+
+print sentance_eval('a very long time')
+
+# if __name__ == "__main__":
+# 	import doctest
+# 	doctest.testmod()
+# 	doctest.run_docstring_examples(syllable_counter, globals(),verbose = True)

@@ -1,0 +1,25 @@
+def syllable_counter(string):
+	i = 0 # index of while loop 
+	counter = 0 # counter of syllables
+	vowels = ['a','e','i','o','u','y','e '] # what are vowels
+	diphthongs = ['ee', 'ei', 'ea', 'oo', 'oi', 'oy', 'ou', 'ai', 'ie'] #what are diphthongs
+	index = 0 
+
+	while word[index] != ' ':
+		char = word[index]
+		next_char = word[index+1]
+
+		if char in vowels: 
+			if (char + next_char in diphthongs): 
+				counter = counter + 1
+				index = index + 1
+			elif (char == 'e' and next_char == ' '):
+				pass
+			else: 
+				counter = counter + 1
+
+		index = index + 1
+
+	return string, counter
+
+print syllable_counter('founde ')
