@@ -1,0 +1,86 @@
+Project Overview [Maximum 100 words]
+
+The object of this project was to analyze the speach of our dear candidates for president of the United States. I used transcripts from http://www.presidency.ucsb.edu/, and the program save.py allows the future downloading and incorporation of coming debates into the data set used in analyze.py. I spent most of my time on the data collection side, trying to automate it as much as possible, with basic frequency analysis performed on that data. I would like to expand this program to be able to generate characteristic phrases of each candidate to prove that if you sound like a robot in the debates, you are either a candidate or a python program.
+
+
+Implementation
+
+The program starts by downloading html for the Table of Contents page for the debates, from which it finds all legitimate links to transcripts with regex implementation (I learned soooo much about this...), and downloads the html. I chose to include the table of contents page in the implementation so that a user could automatically update the data set as more transcripts are added to this page. From this html, it stores each 'remark' in a dictionary of lists of remarks for each candidate, which is pickled and stored locally for analysis. In analysis, a word frequency dictionary is calculated for each candidate, and the most frequent words which are used primarily by a single candidate are printed into a nice looking table. 
+
+I also did a lot of work with saving to local folders, which was a serious learning process, but allows for better organization of the program directories. As mentioned above, regular expressions were central to a number of processes, the most complicated of which were the transcript parsing pattern: '\\n([A-Z]{4,}): (.*?)(?=\\n?[A-Z]{4,})', and the pattern used to match urls from the table of contents page: ', {0}.{1}href="(http:\/\/[^"]*?)">(?:Republican|Democratic)'.format(year_pattern, '{10,200}?'). This one I thought particularly clever because of the combination of regex and string interpolation to allow the targeting of transcripts from specified election years.
+
+Results
+Sanders             Clinton             Trump             Rubio          
+------------------  ------------------  ----------------  ---------------
+15   universities   10   donations      9    leaving      6    seconds   
+16   veterans       10   incomes        9    smart        6    sunni     
+16   corporations   10   children's     10   total        6    strongest 
+17   vermont        10   equal          10   sitting      6    harder    
+17   revolution     10   prescription   11   mess         6    vat       
+17   almost         11   proposed       11   oh           7    criminals 
+17   huge           11   possible       11   bomb         7    underminin
+17   corrupt        11   brothers       12   built        7    shia      
+17   disagree       11   toward         13   anymore      7    america's 
+18   jail           12   potential      13   politicians  7    expensive 
+18   finance        12   fund           14   hundreds     7    agency    
+19   super          13   difficult      14   atlantic     8    struggling
+19   billionaires   14   dodd           14   nice         8    blessed   
+19   large          14   figure         15   totally      8    access    
+19   criminal       15   others         16   guy          9    hold      
+19   view           15   agenda         17   city         9    human     
+21   contributions  16   plans          19   nobody       9    choose    
+24   wealth         16   comprehensive  20   mexico       10   prove     
+25   earth          17   further        20   domain       11   enterprise
+25   public         17   progressive    20   laws         11   pro       
+25   legislation    18   costs          20   eminent      11   dream     
+27   african        18   frank          20   deals        12   rand      
+32   kids           19   communities    21   frankly      13   illegally 
+35   o'             19   particularly   21   oil          16   until     
+35   income         22   certainly      21   excuse       16   21st      
+49   class          23   agreement      26   wouldn't     18   greatest  
+61   major          34   affordable     27   company      18   paycheck  
+80   street         46   try            30   trade        28   century   
+83   campaign       51   sanders        32   tremendous   32   someone   
+112  secretary      93   senator        38   jeb          37   barack    
+
+ Carson             Cruz                Kasich
+-----------------  ------------------  --------------
+3    losers        8    conservatives  6    architect
+3    honesty       8    roberts        6    served
+3    pundits       9    texas          7    400
+3    utilize       9    steve          7    lift
+3    register      10   rubio          7    veteran
+3    bully         10   org            7    town
+3    memorandum    10   defeating      7    collar
+3    pc            10   tedcruz        8    prisons
+3    healing       11   jeff           8    balancing
+3    tithing       11   maria          8    pentagon
+3    rapid         11   born           8    realize
+3    weaponry      11   sessions       9    cuts
+4    integrity     11   schumer        9    formula
+4    bencarson     13   focus          9    gulf
+4    intellect     13   mom            9    fiscal
+4    empowerment   13   defend         9    budgets
+4    box           14   secure         9    treat
+4    aspect        14   irs            10   8
+4    declare       14   s              11   growing
+4    cents         14   fed            11   message
+4    recognizing   17   simple         11   sanctions
+4    neurosurgeon  19   note           12   secondly
+5    correctness   20   islamic        12   hole
+5    ethics        24   commander      12   balance
+5    dependent     25   marco          14   rise
+6    evil          26   chief          14   surplus
+6    deductions    29   court          17   medicaid
+6    agencies      31   flat           26   balanced
+8    wars          33   donald         43   budget
+9    thinking      36   amnesty        54   ohio
+
+
+
+Above are the results of my frequency analysis for p = 0.70. This means that a given instance of a word listed above, there is a 70% probability that the candidate in whose column it lies said them. Looking through these lists, one can make see why they come up if one has been following the debates. For example, Sanders's primary opponant is secretary Clinton, who he addresses as such, and he has cornered the 'secretary' market. Likewise, she refers to him often, as reflected in 'senator' and 'sanders' the top (or really bottom) of her list. Note that Sanders' list does not include 'hillary' or 'clinton'--those are for the rupublicans who tend to talk about her more than him in their debates. Sanders also apparently gets meta more than anyone else with 'campaign', probably with statements like 'this *campaign* is about standing up to a *corrupt* *campaign* *finance* system'. 
+
+On the republican side, we can see that Trump talks a lot about 'jeb', Rubio is on a first name basis with Obama, Carson doesn't really say much at all but prefers 'thinking'. Cruz likes to target 'donald' a lot, also 'marco'. He's a moma's boy, discusses 'flat' taxation a lot, really thinks he has what it takes to be 'commander' in 'cheif', and has been spending some time defending his legitimacy given he was 'born' in Canada. Kasich enjoys 'balancing' 'budgets', so he has 'balanced' many a 'budget' when he 'served' as governer of 'ohio'. He also likes following up his statements with 'secondly'.
+
+Reflection [~1 paragraph]
+I thought my process worked pretty well. It was hard to provide unit tests for many of my functions because of their nature in handling large data sets, but it worked out. I also thought I did a good job compartmentalizing my code for modularity allong the way. Most of my issues came from regex or from the fact that I couldn't visualize my data set very well (I had an issue early on where I was storing the same remarks 22 times in each candidate entry in the master dictionary, which I didn't catch until I was well into analysis and found that all my word frequencies were multiples of 22. That was fun...), but I eventually figured everything out that I wanted to.
