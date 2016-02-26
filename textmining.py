@@ -1,8 +1,10 @@
 import praw
 import pickle
-from constants import API_KEY
 
 def write_comments(subreddit, archetype):
+	"""Search a given subreddit for posts containing a keyword 
+	and save all of each post's comments to a file."""
+
 	r = praw.Reddit('Text analysis on r/{}'.format(subreddit))
 	subreddit = r.get_subreddit(subreddit)
 	posts = subreddit.get_hot(limit=100)

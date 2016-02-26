@@ -3,7 +3,9 @@ import pickle
 from constants import API_KEY
 
 def analyze_comments(archetype):
-    f = open('{}_comments.pickle'.format(archetype.lower()), 'r')
+    """Analyze a list of comments and print the average sentiment, according to Indico."""
+
+	f = open('{}_comments.pickle'.format(archetype.lower()), 'r')
     stored_comments = pickle.load(f)
 
     indicoio.config.api_key = API_KEY #configure indico API
