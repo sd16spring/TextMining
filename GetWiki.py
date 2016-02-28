@@ -2,42 +2,55 @@
 from pattern.web import *
 import os
 import string
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords
 
-def get_text():
-	language = 'English'
-	title = 'United_States'
-	filename = 'en_us_file.txt'
+dict_lang = {'English':['en', 'references'], 'Swedish':['sv', 'referenser'], 'Portuguese':['pt', 'referências'], 'Hungarian':['hu', 'források'], 'Finnish':['fi', 'lähteet'], \
+	'Turkish':['tr', 'kaynakça'], 'German':['de', 'anmerkungen'], 'Dutch':['nl', 'referenties'], 'Norwegian':['nb', 'referanser'], \
+	'Catalan':['ca', 'referències'], 'Spanish':['es', 'referencias'], 'Russian':['ru', 'Примечания'.lower()], 'Danish':['da', 'referencer'], 'Italian':['it', 'bibliografia']}
 
-	wiki = Wikipedia(language)
+def get_text(language, title):
 
-	en_us = wiki.search(title)
-	en_us_text = en_us.plaintext()
+	filename = language + '_us_file.txt'
 
-	en_us_file = open(filename, 'w')
-	en_us_file.write(en_us_text.encode("UTF-8"))
+	wiki = Wikipedia(language = dict_lang[language][0])
 
-	en_us_file.close
+	article = wiki.search(title)
+	article_text = article.plaintext()
 
-def open_text():
-	common_words_en = ['the', 'that', 'of', 'and', 'or', 'in', 'to', 'a', 'an', 'is', 'are', 'were', 'was', 'by', 'for', 'as', 'has', 'have', 'had', 'on', 'at', 'with', 'from', 'it', 'its', 'also', 'which', 'while']
-	# common_words_ch = ['的'，'是'在''的'，'与'，'或'，'到'，'一个'，'是'，'用“，”对“，”如“，”具有'，'从了', 为'，'有', '它'，'还'，'它'，'而']
+	article_file = open(filename, 'w')
+	article_file.write(article_text.encode("UTF-8"))
+
+	article_file.close
+
+def open_text(language):
+	filename = language + '_us_file.txt'
+	if language in dict_lang:
+		common_words = set(stopwords.words(language.lower()))
+	else:
+		common_words = []
+
 	hist = {}
 
-	with open('en_us_file.txt', 'r') as f:
+	with open(filename, 'r') as f:
 		filetext  = [line.translate(None, string.punctuation).lower() for line in f]
 		for line in filetext:
 			for word in line.split():
-				if word == 'references':
+				if word == dict_lang[language][1]:
 					sorted_filetext = sorted(hist, key = hist.__getitem__, reverse = True)
 					return  (sorted_filetext, hist)
-				elif word not in common_words_en:
+				elif word not in common_words:
 					if not word.isdigit():
 						if word in hist:
 							hist[word] += 1
 						else:
 							hist[word] = 1
 	return
+language = 'Spanish'
 
-sorted_filetext, hist = open_text()
+get_text(language, 'United_States')
+sorted_filetext, hist = open_text(language)
+
 for i in range(1,10):
 	print "{}	{}".format(sorted_filetext[i], hist[sorted_filetext[i]])
