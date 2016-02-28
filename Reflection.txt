@@ -1,0 +1,37 @@
+Project Overview
+I used Wikipedia. I ran a simple histogram on the Wikipedia article plaintext, documenting every word and its frequency. I also eliminated common words from the high-frequency list.
+
+Implementation
+I implemented my function in two main parts: getting the data, and analysing it. The first half of my code pulls the wiki article of the appropriate language from the internet, and writes the plaintext into a locally stored file. The second half makes a dictionary of every word and its frequency, then returns a list sorted by decreasing frequency.
+
+I used NLTK to get a list of common words in various languages, rather than writing out lists of articles and prepositions by hand, because I was not personally familiar with several of the languages involved, and making these lists would have been error-ridden and highly time-consuming. Though NLTK only supports select languages, it's still vastly easier to use NTLK.
+
+I also decided to make dict_lang (my dictionary of supported languages, language codes, and translated "reference" strings) a global variable. Since it's pretty bulky text-wise, and since it's used by both of my functions, it was cleanest and most efficient to make dict_lang a global variable.
+
+Results
+It's interesting to note that in the English, Portuguese, and Spanish wiki pages for the US, the word 'war' appears on the top ten most frequent word list. In the Spanish article, the word 'war' appears 57 times; in Portugese, 56 times. Other common words include 'world,'(Portuguese), 'million,' (Danish, Spanish) 'most/more than,' (Spanish, Portuguese) 'change' (Turkish), and 'large.' (Swedish) As expected, 'US,' 'United,' and 'States' are also very common.
+It seems that, despite being a relatively new country, America is already "perceived as "larger than life" and a major military/world force.
+
+Other articles:
+Donald Trump-
+	US- million, new york
+	Italy- Obama, no
+	Spanish- Consulted
+	Portuguese- Reliable, no, favor, independent
+Hillary Clinton-
+	US- Campaign, first lady
+	Italy- Bill, first lady
+	Spanish- first lady, plus, bell
+	Portuguese-Obama, first lady
+Russia-
+	US- Soviet, war, largest, world
+	Russia- Cinema, consignment
+	German- Asteroid, states
+	Turkish- Soviet, Belarus, big, change
+
+Reflection
+My project was appropriately scoped. Unfortunately, I was extremely busy the past week, and I couldn't really devote enough time to this project.
+
+I did manage to get my entire project done in under 7 hours, which is actually pretty impressive in hindsight. I got a lot faster when I stopped trying to use BeautifulSoup.
+I learned a lot about HTML when I was mucking about with BeautifulSoup, though, which is good. Going forward, I know a lot more about how web pages are formatted, and how to pull information from them.
+If I could have known something before I started, I would have liked to have known how busy I was going to be this weekend, so that I would have spent time coding instead of researching BeautifulSoup.
