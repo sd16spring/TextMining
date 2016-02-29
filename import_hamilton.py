@@ -66,32 +66,5 @@ base_name = 'hamilton'
 # this is a list of names for the files i create
 names_list = file_names(list_of_links, base_name)
 
-# me doing the save_files thing manually to debug
-# song = requests.get(list_of_links[0])
-# text_file = open(names_list[0], "w")
-# text_file.write(song.content)
-# text_file.close
-
 # this uses the save_files function to get all the things i want
 save_files(list_of_links, names_list)
-
-####### here is where the actual code stops
-
-# print file_names([1, 2, 3, 4, 5, 6], 'hamilton')
-
-# alexander_hamilton = URL('http://www.themusicallyrics.com/h/351-hamilton-the-musical-lyrics/3706-alexander-hamilton-lyrics.html').download()
-# text_file = open("hamilton_1.txt", "w")
-# text_file.write(alexander_hamilton)
-# text_file.close
-
-# soup = BeautifulSoup(lyrics, "html.parser")
-
-# some_urls = find_links(soup)
-
-# print find_links(soup)
-
-# how to do get an html file of a lyrics page
-# soup = BeautifulSoup(lyrics, "html.parser")
-# text_file = open("Output.txt", "w")
-# text_file.write(soup.prettify().encode("UTF-8"))
-# text_file.close()
