@@ -13,7 +13,7 @@ def find_links(soup):
     list_o_links = []
 # this iterates through all links in the html file and appends them to a list
     for link in soup.find_all('a'):
-        list_o_links.append('http://www.themusicallyrics.com/' + link.get('href'))
+        list_o_links.append(link.get('href'))
 # and the list gets returned
     return list_o_links
 
@@ -25,8 +25,9 @@ def cull_links(beginning_url, list_urls):
 # iterates through the list of URLs; if an item contains the desired URL,
 # appends the item to the new list of URLs.
     for x in list_urls:
-        if beginning_url in x:
-            new_list_urls.append(x)
+        if x:
+            if beginning_url in x:
+                new_list_urls.append(x)
     return new_list_urls
 
 
@@ -46,7 +47,7 @@ def save_files(list_of_links, list_of_names):
         text_file.close
 
 # i can get the html of the page i want
-url_source = requests.get('http://www.themusicallyrics.com/h/351-hamilton-the-musical-lyrics.html')
+url_source = requests.get('file:///home/lnielsen/Downloads/Hamilton%20(Original%20Broadway%20Cast%20Recording)%20-%20Act%20I%20Booklet%20-%20FINAL.pdf')
 # i can save it in a file
 text_file = open('url_page.txt', 'w')
 text_file.write(url_source.content)
@@ -54,10 +55,11 @@ text_file.close
 
 # this lets me use BeautifulSoup because i want to
 soup = BeautifulSoup(url_source.content, 'lxml')
+print soup
 
 # this uses the find_links function and defines which links i want
 some_urls = find_links(soup)
-useful_url = '/351-hamilton-the-musical-lyrics/'
+useful_url = 'http://genius.com/Lin-manuel-miranda-'
 
 # this makes a list of links and a base name for naming the files i create
 list_of_links = cull_links(useful_url, some_urls)
