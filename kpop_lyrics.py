@@ -104,23 +104,6 @@ def processing(numb):
     return all_words
 kpop = processing(20)
 
-"""def create_word_list(complete_string):
-+	Takes a string of the complete Shakespeare and splits it into a list of words, while inserting 'ENDLINE' between lines
-+	shake_list_lines=complete_string.splitlines()
-+	shake_list=[]
-+	for line in shake_list_lines:
-+		inner_list=line.split()
-+		if not inner_list==[]:
-+			inner_list.append('ENDLINE')
-+			shake_list.append(inner_list)
-+	#print shake_list
-+	new_shake_list=[]
-+	for inner_list in shake_list:
-+		for word in inner_list:
-+			new_shake_list.append(word)
-+	return new_shake_list"""
-
-
 
 def sample(korean):
     for word in korean:
