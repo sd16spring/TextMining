@@ -25,7 +25,7 @@ def analyze():
 	rawlist = file.read().split(" ")  #this is get rid of article and common words.
 
 
-	baddictionary = 'still, put, want, i\'m, got, stop, don\'t, too, should, the, of, and, a, to, in, is, you, that, it, he, was, for, on, are, as, with, his, they, i, at, be, this, have, from, or, one, had, by, word, but, not, what, all, were, we, when, your, can, said, there, use, an, each, which, she, do, how, their, if, will, up, there, about, out, many, then, them, these, so, some, her, would, make, like, him, into, time, has, look, two, more, write, go, see, number, no, way, could, people, my, than, first, water, been, call, who, oil, its, now, find, long, down, day, did, get, come, made, may, part'
+	baddictionary = 'yet, just, well, me, thats, does, still, put, want, im, got, stop, dont, too, should, the, of, and, a, to, in, is, you, that, it, he, was, for, on, are, as, with, his, they, i, at, be, this, have, from, or, one, had, by, word, but, not, what, all, were, we, when, your, can, said, there, use, an, each, which, she, do, how, their, if, will, up, there, about, out, many, then, them, these, so, some, her, would, make, like, him, into, time, has, look, two, more, write, go, see, number, no, way, could, people, my, than, first, water, been, call, who, oil, its, now, find, long, down, day, did, get, come, made, may, part'
 	badwords = baddictionary.split(", ")
 
 	rawlist = [word for word in rawlist if word not in badwords]
@@ -46,7 +46,24 @@ def analyze():
 	for freq, word in sortinglist:
 		res.append(word)
 
-	print res[:10]    #prints the top 10 most popular words 
+	for item in res:    #gets rid of spaces
+		if item == ' ' or item == '':
+			res.remove(item)	
+
+
+
+	# fancy printing of the top 10
+
+	output = ''
+	output = 'Top 10 \n'
+	if len(res) < 10:
+		for i in range(len(res)):
+			output +=  '{}. '.format(i+1) + res[i] + '\n'
+	else:
+		for i in range(10):
+			output += '{}. '.format(i+1) + res[i] + '\n'		
+
+	print output   #prints the top 10 most popular words 
 
 
 def sentiments(twitchchat):

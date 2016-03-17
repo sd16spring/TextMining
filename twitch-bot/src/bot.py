@@ -60,7 +60,11 @@ class Roboraj:
 
 				ppi(channel, message, username)
 
-				message = message.translate('!@#$%^&*()<>?/\"\',;:_-=+.')   #these two lines get rid of weird characters that aren't important
+				filtering = ('! @ # $ % ^ & * ( ) \ < > ? / \" \' , ; : _ - = + . ~').split(' ')
+
+				for item in filtering:
+					message = message.replace(item, '')        #these two lines get rid of weird characters that aren't important
+
 				message = message.lower()
 
 				filechicken.write(message + " ") #writes to the file
