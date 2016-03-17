@@ -7,13 +7,17 @@ import pickle
 import sys
 import src.config.config
 
+global streamer_name 
+
+streamer_name = ''
 
 name = raw_input('\n\nPlease input the name of the streamer whose chat you would like to analyze!\n\n')
 
 name = name.lower()
+streamer_name = '#' + name
 
-streamer_name = name
 
+config['channels'] = [streamer_name]
 	
 bot = Roboraj(config).run()
 
