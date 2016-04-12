@@ -1,3 +1,10 @@
+"""
+The configuration page, which holds all the information passed to the server to make the correct connection to the right streamer.
+It is driven by user input on the streamer name.
+
+Base code by Aidan, the modification of user input was done my me
+Kevin Zhang, Software Design Spring 2016
+"""
 global config
 
 
@@ -11,7 +18,7 @@ config = {
 	'oauth_password': 'oauth:08dybr0t5r2zpn6nr2grrinaob88z2', # get this from http://twitchapps.com/tmi/
 	
 	# channel to join
-	'channels': ['chicken'],
+	'channels': ['chicken'],   #currently with a proxy which will be replaced by user input
 
 	# if set to true will display any data received
 	'debug': False,
