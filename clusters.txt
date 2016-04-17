@@ -1,0 +1,30 @@
+Cluster:
+Most Frequent: ['nice', 'song', 'not', 'movie', 'watching', 'one', 'no', 'who', 'get', 'best', 'looks', 'cute', 'thank', 'wow', 'know']
+Number of Comments: 14105
+Cluster:
+Most Frequent: ['fucking', 'shit', 'shut', 'off', 'guys', 'cat', 'here', 'u', 'idiot', 'not', 'bitches', 'asshole', 'give', 'see', 'who']
+Number of Comments: 235
+Cluster:
+Most Frequent: ['music', 'love', 'name', 'good', 'end', 'please', 'using', 'background', 'best', 'make', 'title', 'cool', 'cut', 'now', 'song']
+Number of Comments: 97
+Cluster:
+Most Frequent: ['love', 'song', 'movie', 'baby', 'thank', 'sister', 'watching', 'brother', 'little', 'd', 'dog', 'cute', 'best', 'one', 'awesome']
+Number of Comments: 466
+Cluster:
+Most Frequent: ['why', 'not', 'dislike', 'does', "don't", 'people', 'many', 'views', 'watching', 'dont', 'popular', 'kids', 'everyone', 'guys', 'know']
+Number of Comments: 251
+Cluster:
+Most Frequent: ['good', 'movie', 'job', 'song', 'oh', 'thank', 'moving', 'keep', 'working', 'not', 'looks', 'nice', 'time', 'man', 'old']
+Number of Comments: 249
+Cluster:
+Most Frequent: ['lol', 'xd', 'song', 'love', 'some', 'parts', 'about', 'end', 'watching', 'came', 'think', 'girls', 'guys', 'here', 'time']
+Number of Comments: 198
+Cluster:
+Most Frequent: ['cool', 'wow', 'song', 'looks', 'think', 'pretty', 'phone', 'd', 'fucking', 'play', 'girls', 'super', 'omg', 'there', 'awesome']
+Number of Comments: 194
+Cluster:
+Most Frequent: ['youtube', 'watching', 'thank', 'channel', 'sharing', 'subscribe', 'get', 'one', 'copy', 'most', 'hi', 'views', 'first', 'posts', 'popular']
+Number of Comments: 87
+Cluster:
+Most Frequent: ['funny', 'lol', 'cute', 'haha', 'love', 'not', 'because', 'xd', 'movie', 'talking', 'peaceful', 'dog', 'watching', 'cry', 'hell']
+Number of Comments: 108
