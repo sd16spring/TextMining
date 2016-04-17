@@ -14,6 +14,3 @@ Arguments: URL of text file to be saved as a string, name of the file for use in
     pickle.dump(tale, save_file)
     save_file.close()
 
-get_text('http://www.gutenberg.org/cache/epub/2591/pg2591.txt', 'grimm')
-get_text('https://archive.org/download/fairytalesofhans27200gut/27200.txt','andersen')
-get_text('https://ia600302.us.archive.org/15/items/thefairytalesofc29021gut/pg29021.txt', 'perrault')
