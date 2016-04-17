@@ -1,0 +1,27 @@
+""" This is my text gathering code
+"""
+
+import pickle 
+# current_URL = 'https://www.gutenberg.org/files/7015/7015-0.txt'
+all_texts = []
+
+def gutenberg_text_gather(current_URL):
+
+	from pattern.web import *
+	buddhist_psalm_text = URL(current_URL).download()
+	print buddhist_psalm_text
+
+	# Save data to a file (will be part of your data fetching script)
+	f = open('buddhist_psalm_text.pickle','w')
+	pickle.dump(all_texts,f)
+	f.close()
+
+	# Load data from a file (will be part of your data processing script)
+	input_file = open('buddhist_psalm_text.pickle','r')
+	reloaded_copy_of_texts = pickle.load(input_file)
+
+
+def make_dictionary():
+	# make dictionary with index, forward, preface, introduction, apendix, all that stuff removed
+	# strip all peroids
+	pass
