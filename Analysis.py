@@ -1,7 +1,15 @@
+"""
+Serena Chen
+Analysis.py
+Analyzes comments using different metrics; clusters them (clustering writes to 'clusters.txt')
+"""
 from pattern.en import *
 from langdetect import *
 from re import match
+import Clustering
+from numpy import arange
 import string,pickle
+
 
 def sentimentAnalyzer(commentList):
 	"""takes the sentiment of each commetnaccording to the pattern module.
@@ -80,6 +88,7 @@ def spellCheck(commentList):
 	return (numCorrect,numWrong,misspelled)
 
 if __name__=='__main__':
+	"""Run analysis on comments"""
 	# import doctest
 	# doctest.testmod()
 	masterList = {}
@@ -104,20 +113,20 @@ if __name__=='__main__':
 			y.append(c)
 			masterList[lang]=y
 
-		#print comments
-		print 'ID: '+ str(vidCat)
-		if 'en' in miniLangList.keys():
+		#print data about each category of videos
+		# print 'ID: '+ str(vidCat)
+		# if 'en' in miniLangList.keys():
 			
-			sent = sentimentAnalyzer(miniLangList['en'])
-			print 'Average Polarity: {:1.5f}'.format(sent[0])
-			print 'Average Extremity: {:1.5f}'.format(sent[1])
-			freqs = wordFrequency(miniLangList['en'])
-			print 'Top 20:'
-			print freqs[0:20]
-			spell = spellCheck(miniLangList['en'])
-			print 'Spelled Right: {}\nSpelled Wrong: {}'.format(spell[0], spell[1])#,spell[2])
-			print[(k, len(miniLangList[k])) for k in sorted(miniLangList.keys())]
-			print ''
+		# 	sent = sentimentAnalyzer(miniLangList['en'])
+		# 	print 'Average Polarity: {:1.5f}'.format(sent[0])
+		# 	print 'Average Extremity: {:1.5f}'.format(sent[1])
+		# 	freqs = wordFrequency(miniLangList['en'])
+		# 	print 'Top 20:'
+		# 	print freqs[0:20]
+		# 	spell = spellCheck(miniLangList['en'])
+		# 	print 'Spelled Right: {}\nSpelled Wrong: {}'.format(spell[0], spell[1])#,spell[2])
+		# 	print[(k, len(miniLangList[k])) for k in sorted(miniLangList.keys())]
+		# 	print ''
 	print 'ALL'
 	sent = sentimentAnalyzer(masterList['en'])
 	print 'Average Polarity: {:1.5f}'.format(sent[0])
@@ -130,3 +139,6 @@ if __name__=='__main__':
 	print 'Percentage Mispelled: {}'.format(spell[1]*100.0/(spell[0]+spell[1]))
 	langs = [(k, len(masterList[k])) for k in masterList.keys()]
 	print sorted(langs, key=lambda x:x[1],reverse=True)
+
+	Clustering.kMeans(masterList['en'], numClusters=10, numDefiningWords=15)
+	#Clustering.dumbClustering(masterList['en'])
