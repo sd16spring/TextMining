@@ -4,7 +4,7 @@ for the most frequent words in a message thread I specified, and then
 returns a word cloud of the most popular words in the thread.
 
 I opted out of unit tests for BeautifulSoup things because the way it does data
-types is difficult and confusing. 
+types is difficult and confusing.
 """
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
@@ -41,6 +41,7 @@ def word_cloud(text):
     """
     wc = WordCloud()
     wc.generate(text)
+    wc.to_file('test.png')
 
 def get_freq(text):
     """
