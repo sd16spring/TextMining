@@ -85,6 +85,7 @@ def poem(text, n, stanzas):
 		poem += "{} {}, {}, {}\n".format(prepositions[j-y], word_list[i-3-(97*y)], word_list[i-4-(97*y)], rhymes[r-y])
 		poem += "{} {}, {} {}, {} {}\n".format(word_list[k-y], word_list[i-5-(47*y)], word_list[k-1-y], word_list[i-6-(47*y)], word_list[k-2-y], word_list[i-7-(47*y)])
 		poem += "much {}, very {}, wow\n\n".format(word_list[i-8-(47*y)], word_list[i-9-(5*y)])
+		# Why such wonky numbers? Well, 7, 47, and 97 are all prime numbers, so I thought that if I used them, it'd be less likely for the indices to overlap.
 
 	poem += "how did doge do? (such poetry) (many wurdz) (((wow)))\n"
 	return poem
@@ -126,7 +127,7 @@ def negative_sentiment(text, n, stanzas):
 def poem_and_treat(text, n, stanzas):
 	""" Allows user to give doge a treat in order to make the poem have a positive polarity (in other words, an awesome poem). Alternatively, if doge is not given a treat, the poem will have a negative polarity (in other words, a sad poem).
 	"""
-	treat = raw_input("Give doge a treat? (y/n) ")
+	treat = raw_input("Give doge a treat? (y/n) ") # Feed doge a treat!
 	if treat == "y":
 		treat_poem = "\nTREAT!!!!!!!1!!!ONE!!!!!\nDOGE WILL MAKE AWESOME POEM!!! FOR TREAT!!!!!!\n\n" + positive_sentiment(text, n, stanzas)
 	else:
