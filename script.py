@@ -1,16 +1,17 @@
+"""
+This is a python script that analyzes the positivity of a subreddit by running sentiment analysis on the title of the subreddit's 'hot' posts
+"""
+
 import praw
 from pattern.en import *
-import numpy
+from numpy import mean
 
 r = praw.Reddit(user_agent='my_app')
-
-#for post in processed_posts:
-#    print post, sentiment(post)
 
 def get_titles(subreddit):
     '''
         Takes string subreddit as a subreddit to search for.
-        Returns a list of titles of first 20 current hot posts
+        Returns a list of titles of first 100 current hot posts
     '''
     submissions = r.get_subreddit(subreddit).get_hot(limit=100)
     posts = [str(submission) for submission in submissions]
@@ -19,18 +20,29 @@ def get_titles(subreddit):
         processed_posts.append(post.translate(None, '0123456789:')) #deletes all numbers and colons to get rid of upvote nums
     return processed_posts
 
-def get_sentiments(posts):
+def get_comments(subreddit,n):
     '''
-        Given a list of strings which represent post titles, return an average sentiment value of the subreddit
+        Takes string subreddit as a subreddit to search for.
+        Returns a list containing n number of comments from that subreddit
+    '''
+    comments_object = r.get_subreddit(subreddit).get_comments(limit=n)
+    comments = []
+    for comment in praw.helpers.flatten_tree(comments_object): #iterate through all comments in a comment tree (including replies)
+        comments.append(str(comment))
+    return comments
+
+def get_sentiments(data):
+    '''
+        Given a list of strings which represent post titles or comments, return an average sentiment value of the subreddit
     '''
     sentiments = []
-    for post in posts:
-        sentiment_value = sentiment(post)
+    for entry in data:
+        sentiment_value = sentiment(entry)
         if abs(sentiment_value[0]) < 0.1:
-            continue #don't include this value because it means sentiment analysis wasn't successful
+            continue #don't include this value because it means sentiment analysis wasn't significant
         else:
             sentiments.append(sentiment_value[0])
-    return numpy.mean(sentiments)
+    return mean(sentiments)
 
 def order_subreddit(subreddits):
     '''
@@ -48,9 +60,11 @@ def order_subreddit(subreddits):
     
     return ordered_result
 
-#print get_titles('nba')
-#print 'aww: ', get_sentiments(get_titles('aww'))
-#print 'nba: ', get_sentiments(get_titles('nba'))
-#print 'tifu: ',get_sentiments(get_titles('tifu'))
 subreddits = ['aww','nba','science','nottheonion','worldnews']
-print order_subreddit(subreddits)
+#print order_subreddit(subreddits)
+
+print get_sentiments(get_comments('aww',100))
+print get_sentiments(get_comments('nba',100))
+print get_sentiments(get_comments('science',100))
+print get_sentiments(get_comments('nottheonion',100))
+print get_sentiments(get_comments('worldnews',100))
