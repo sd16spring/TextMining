@@ -1,9 +1,6 @@
 '''This program finds all of the Olinsider articles and downloads them to find the sentiment of the articles'''
 
-import doctest
-import string
-import re
-import unicodedata
+import doctest, string, re, unicodedata
 import numpy as np
 import matplotlib.pyplot as plt
 from pattern.web import *
@@ -51,7 +48,7 @@ def get_data(filename):
 	except:
 		return None
 
-def mine_olinsider(url):
+def mine_olinsider(url, mine=False):
 	''' This function takes the end part of an Olin website url
 
 		It creates a file name from the given url uses get_data to check if the file exists
@@ -60,7 +57,7 @@ def mine_olinsider(url):
 		Otherwise, it will return what it got from get_data
 		'''
 	filename = 'Data'+url.replace('/', '')+'.dat'
-	if get_data(filename) == None:
+	if get_data(filename) == None or mine == True:
 		print('getting data')
 		x = URL('http://www.olin.edu'+url).download()
 		save_data(x, filename)
@@ -75,34 +72,32 @@ def mine():
 		It downloads the sourcecode for the mainpage if it doesn't already exist and then parses it to get the urls for the articles by month
 		It then goes through and downloads the sourcecode for the articles by month if they don't already exist and then parses it for the urls for the articles
 		It then goes through and downloads the sourcecode for the articles if they don't already exist and returns a list of the sourcecode of the articles
+
+		It will always redownload the main page and latest month in case another article has been added within that month
 	'''
 	#getting the main Olinsider page
 	url = '/blog/the-olinsider/'
-	main_page = mine_olinsider(url)
+	main_page = mine_olinsider(url, True)
 	dat = main_page.split('\"')
-	month_urls = []
 	#searching through the mainpage source code to find the articles by month urls
-	for d in dat:
-		if '/blog/the-olinsider/by-date' in d:
-			month_urls.append(d.split('::')[1])
-	intermediate = []
-	posturls = []
+	month_urls = [d.split('::')[1] for d in dat if '/blog/the-olinsider/by-date' in d]
+	#This goes ahead and redownloads the last month page in case there 
+	mine_olinsider(month_urls[-1], True)
 	#getting the articles by month sourcecodes
-	for url in month_urls:
-		intermediate.append(mine_olinsider(url))
+	intermediate = [mine_olinsider(url) for url in month_urls]
+	
+	posturls = []
 	for i in intermediate:
 		s = i.split('\"')
 		#searching through the by month sourcecodes for the article urls
 		for url in s:
 			if '/blog/the-olinsider/post/' in url:
-				h = url.replace('#disqus_thread', '')
+				h = url.replace('#disqus_thread', '') #removing the url for the comment section of the page
 				posturls.append(h)
 	#removing repeated urls
 	posturls = set(posturls)
-	post_source = []
 	#getting the article sourcecode
-	for url in posturls:
-		post_source.append(mine_olinsider(url))
+	post_source = [mine_olinsider(url) for url in posturls]
 	return post_source
 
 def filter_unicode(source):
@@ -111,23 +106,18 @@ def filter_unicode(source):
 		>>> filter_unicode([unicodedata.lookup("sailboat")+'hello'])
 		[u'hello']
 	'''
-	filtered = []
 	printable = set(string.printable)
-	for sourcecode in source:
-		filtered.append(filter(lambda x: x in printable, sourcecode))
+	filtered = [filter(lambda x: x in printable, sourcecode) for sourcecode in source]
 	return filtered
 
 def filter_old(source, search):
 	''' This function filters through the old style of posts where the article text was stored in dividers
 		It is also used to get the date from the new and old posts
 	'''
-	divs = []
 	data = []
 	soup = BeautifulSoup(source, "lxml")
 	div = soup.find_all('div')
-	for d in div:
-		if str(d) not in divs:
-			divs.append(str(d))
+	divs = [str(d) for d in div if str(d) not in divs]
 	for div in divs:
 		soup2 = BeautifulSoup(div, "lxml")
 		tag = soup2.div
@@ -146,14 +136,11 @@ def filter_new(source):
 	''' This function filters through the new style of posts where the article text is stored in paragraphs
 		It calls filter_old to get the date from the article which is still stored in dividers
 	'''
-	divs = []
 	data = []
 	data.append(filter_old(source, [['blog-post-date']])[0])
 	soup3 = BeautifulSoup(source, "lxml")
 	div = soup3.find_all('p')
-	for d in div:
-		if str(d) not in divs:
-			divs.append(str(d))
+	divs = [str(d) for d in div if str(d) not in divs]
 	for div in divs:
 		soup4 = BeautifulSoup(div, "lxml")
 		tag = soup4.p
@@ -238,7 +225,7 @@ def get_sentiment(posts):
 	''' This function takes in a list posts and returns 2 lists of the polarity and subjectivity, respectively'''
 	polarity = []
 	subjectivity = []
-	for post in real_posts:
+	for post in posts:
 		sent = sentiment(post[1])
 		polarity.append(sent[0])
 		subjectivity.append(sent[1])
@@ -249,34 +236,14 @@ def process_dates(posts, polarity, subjectivity):
 
 		It gets the dates from the posts and returns a list of the year, month, polarity, and subjectivity of each post
 	'''
-	dates = []
-	for post in posts:
-		dates.append(post[0])
+	dates = [post[0] for post in posts]
 	for i in range(len(dates)):
 		dates[i] = [dates[i][2], dates[i][0], polarity[i], subjectivity[i]]
 	return dates
 
-if __name__ == '__main__':
-	doctest.testmod()
-	source = mine()
-	filtered_posts = filter_unicode(source)
-	posts = update_data(filtered_posts, 'Filtered_Posts.dat')
-	real_posts = process_posts(posts)
-	polarity, subjectivity = get_sentiment(real_posts)
-	date_data = process_dates(real_posts, polarity, subjectivity)
-	date_data = sorted(date_data)
+def get_by_month(date_data):
+	'''This function resorts the data for the bar plots'''
 	rang = date_data[-1][0] - date_data[0][0]
-	
-	# Scatter plot of the data
-	plt.scatter(polarity, subjectivity, marker = '*', color = 'g')
-	plt.axis([-1, 1, 0, 1])
-	plt.grid(True)
-	plt.xlabel('Polarity (Negative to Positive)')
-	plt.ylabel('Subjectivity (Objective to Subjective)')
-	plt.title('Polarity vs Subjectivity for Olinsider posts')
-	plt.savefig('ScatterPlot.eps')
-	plt.clf()
-
 	years = []
 	for i in range(rang+1):
 		months = []
@@ -302,8 +269,21 @@ if __name__ == '__main__':
 			else:
 				mon.append([0, 0])
 		bymonth.append(mon)
+	return bymonth
 
-	# Scatter plot over time of the data
+def scatter_plot(polarity, subjectivity):
+	'''This function plots and saves a scatter plot of the subjectivity vs polarity'''
+	plt.scatter(polarity, subjectivity, marker = '*', color = 'g')
+	plt.axis([-1, 1, 0, 1])
+	plt.grid(True)
+	plt.xlabel('Polarity (Negative to Positive)')
+	plt.ylabel('Subjectivity (Objective to Subjective)')
+	plt.title('Polarity vs Subjectivity for Olinsider posts')
+	plt.savefig('ScatterPlot.eps')
+	plt.clf()
+
+def scatter_plot_time(bymonth, polarity, subjectivity):
+	'''This function plots and saves a scatter plot of the subjectivity and polarity vs time'''
 	avg_pol = []
 	avg_sub = []
 	for year in bymonth:
@@ -321,13 +301,51 @@ if __name__ == '__main__':
 	plt.savefig('ScatterOverTime.eps')
 	plt.clf()
 
-	# Bar graph of the data
+def bar_plot(name, type_bymonth):
+	'''This function creates a bargraph based on the given data'''
 	n = 9
 	ind = np.arange(12)
 	width = 1./(1+n)
 	colors = ['#000000', '#FE2E2E', '#FF8000', '#FFFF00', '#74DF00', '#01DFA5', '#00BFFF', '#0101DF', '#8904B1', '#DF0174']
 	labels = range(2007,2017) 
 	ticks = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	for year in range(len(type_bymonth)):
+		ax.bar(ind+year*width, type_bymonth[year], width, color = colors[year], label = str(labels[year]))
+	plt.xticks(ind+n/2.*width, ticks)
+	ax.tick_params(axis='x', labelsize=8)
+	plt.gcf().subplots_adjust(right=0.85)
+	plt.xlabel('Month')
+	plt.ylabel(name)
+	plt.title('Average ' + name + ' for a given month and year')
+	plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+	fig.set_size_inches(9, 5)
+	fig.savefig(name + 'Bar.eps')
+	plt.clf()
+
+def run():
+	''' This function runs the mining part of the program
+
+		returns the data_data, polarity, and subjectivity
+	'''
+	source = mine()
+	filtered_posts = filter_unicode(source)
+	posts = update_data(filtered_posts, 'Filtered_Posts.dat')
+	real_posts = process_posts(posts)
+	polarity, subjectivity = get_sentiment(real_posts)
+	date_data = process_dates(real_posts, polarity, subjectivity)
+	date_data = sorted(date_data)
+	return date_data, polarity, subjectivity
+
+if __name__ == '__main__':
+	doctest.testmod()
+	date_data, polarity, subjectivity = run()
+	bymonth = get_by_month(date_data)
+	scatter_plot(polarity, subjectivity)
+	scatter_plot_time(bymonth, polarity, subjectivity)
+
+	#Sets up the data for the bar graphs
 	pol_bymonth = []
 	sub_bymonth = []
 	for year in bymonth:
@@ -339,32 +357,5 @@ if __name__ == '__main__':
 		pol_bymonth.append(mon)
 		sub_bymonth.append(mon2)
 
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
-	for year in range(len(pol_bymonth)):
-		ax.bar(ind+year*width, pol_bymonth[year], width, color = colors[year], label = str(labels[year]))
-	plt.xticks(ind+n/2.*width, ticks)
-	ax.tick_params(axis='x', labelsize=8)
-	plt.gcf().subplots_adjust(right=0.85)
-	plt.xlabel('Month')
-	plt.ylabel('Positivity')
-	plt.title('Average Polarity for a given month and year')
-	plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-	fig.set_size_inches(9, 5)
-	fig.savefig('PolarityBar.eps')
-	plt.clf()
-
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
-	for year in range(len(sub_bymonth)):
-		ax.bar(ind+year*width, sub_bymonth[year], width, color = colors[year], label = str(labels[year]))
-	plt.xticks(ind+n/2.*width, ticks)
-	ax.tick_params(axis='x', labelsize=8)
-	plt.gcf().subplots_adjust(right=0.85)
-	plt.xlabel('Month')
-	plt.ylabel('Subjectivity')
-	plt.title('Average Subjectivity for a given month and year')
-	plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-	fig.set_size_inches(9, 5)
-	fig.savefig('SubjectivityBar.eps')
-	plt.clf()
+	bar_plot('Polarity', pol_bymonth)
+	bar_plot('Subjectivity', sub_bymonth)
