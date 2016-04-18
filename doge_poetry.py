@@ -134,4 +134,4 @@ def poem_and_treat(text, n, stanzas):
 		treat_poem = "\ntreat? treat??? no...?\nsad doge is sad...\n\n" + negative_sentiment(text, n, stanzas)
 	return treat_poem
 
-print poem_and_treat("Shakespeare.txt", 10000, 2)
+print poem_and_treat("Shakespeare.txt", 10000, 2) # Takes as input the text, the number of words to include in the word bank, and the number of stanzas
