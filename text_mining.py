@@ -1,81 +1,64 @@
 # Markov Text Synthesis
 # David Papp
+"""
+Changes:
+- Paramaterized URL to import from. 
+- Choose whether to read text in from URL or pickle file
+- Cleaned up the dictionary creation by using the .get and .split function
+- Increased the efficiency of stripping text by using .translate
+- Removed all functions that generated Markov text by degree.
+- Added comments and improved docstrings.
+"""
 import pickle
 import praw
 import random
 import string
 import re
 
-def import_data():
+def import_data(URL_path, from_file):
 	"""
-	Reads data from given URL into a .pickle file. This only has to be done once.
-	The contents of the .pickle file are then loaded into a string, which is returned.
-
+	If from_file is false, data is read from given URL into a .pickle file. This only has to be done once.
+	Otherwise, the contents of the existing .pickle file are loaded into a string, which is returned.
 	"""
-
-
-	"""from pattern.web import *
-	pride_and_prejudice_text = URL('http://www.gutenberg.org/cache/epub/1342/pg1342.txt').download()
-	f = open('pride_and_prejudice.pickle','w')
-	pickle.dump(pride_and_prejudice_text,f)
-	f.close()"""
-
-	# Load data from a file (will be part of your data processing script)
-	input_file = open('pride_and_prejudice.pickle','r')
+	if not from_file:
+		from pattern.web import *
+		pride_and_prejudice_text = URL(URL_path).download()
+		f = open('pride_and_prejudice.pickle', 'w')
+		#store text in a .pickle file for future use.
+		pickle.dump(pride_and_prejudice_text,f)
+		f.close()
+	input_file = open('pride_and_prejudice.pickle', 'r')
 	return pickle.load(input_file)
-
-def markov_text_synthesis_by_degree(degree, text):
-	"""
-	This function chooses the degree (number of letters) by which text is analyzed.
-	For example, a degree of 3 would mean that the program looks at the last 3 characters
-	to generate the next character.
-	It will then create a nested dictionary of the character sequences, the letters that
-	follow those sequences, and the number of times the letters occur after the sequences.
-	Many of the words produced will be gidderish, but still interesting.
-	"""
-
-	storage = dict()
-	next_letters = text[degree:degree*2].lower()
-	for i in range(0, len(text) - degree):
-		letters = text[i:i + degree].lower()
-		if letters not in storage:
-			storage[letters] = dict()
-		next_letters = text[i + degree:i + degree + 1].lower()
-		if next_letters not in storage[letters]:
-			storage[letters][next_letters] = 1
-		storage[letters][next_letters] += 1
-	return storage
 
 def markov_text_synthesis_by_word(text):
 	"""
 	Creates a nested dictionary of words, the words that follow those words,
 	and the number of times the these words follow the previous words.
 	"""
-
+	#put the words into a list
+	words = text.split()
 	storage = dict()
-	index = 0
-	while index < len(text):
-		end_index = text.find(' ', index, len(text))
-		if end_index < 0:
-			break
-		word = text[index:end_index]
-		if word not in storage:
-			storage[word] = dict()
-		next_word_end_index = text.find(' ', end_index + 1, len(text))
-		if next_word_end_index < 0:
-			break
-		next_word = text[end_index + 1:next_word_end_index]
-		if next_word not in storage[word]:
-			storage[word][next_word] = 1
-		storage[word][next_word] += 1
-		index = end_index + 1
+
+	previous_word = ""
+	for word in words:
+		#if this word has not occured yet, create an empty dictionary for it.
+		if previous_word not in storage:
+			storage[previous_word] = dict()
+
+		#If this word has not followed the previous one, it is added to the dictionary.
+		#Otherwise, increment the number of occurances by 1.	
+		storage[previous_word][word] = storage[previous_word].get(word, 0) + 1
+
+		#updates previous_word
+		previous_word = word
+
 	return storage
 
 def display_dictionary(storage, probability_storage):
 	"""
-	Displays the dictionary in a logical way.
+	Displays the words found in the text and the frequency at which other
+	words follow them.
 	"""
-
 	print "Letters: "
 	total = 0
 	for i in storage:
@@ -88,55 +71,38 @@ def display_dictionary(storage, probability_storage):
 def convert_to_probability(storage):
 	"""
 	Returns a new dictionary based on another dictionary but with the relative probability
-	of each word following another word. The probabilities are cumulative so that
-	choosing one based on a random number is convenient.
+	of each word following another word (instead of frequency). The probabilities are 
+	cumulative so that choosing one based on a random number is convenient.
 	"""
+	#create a new dictionary to copy into
 	probability_storage = dict()
 	for i in storage:
-		if i not in probability_storage:
-			probability_storage[i] = dict()
+		probability_storage[i] = dict()
 
+		#adds up occurances of different words after each word, then divides by total occurances to get probability
 		total = 0.0
 		for j in storage[i]:
 			total += storage[i][j]
 		previous = 0.0
+
+		#copies probabilities into new dictionary
 		for j in storage[i]:
-			if j not in probability_storage[i]:
-				probability_storage[i][j] = previous + storage[i][j] / total
-				previous = probability_storage[i][j]
+			probability_storage[i][j] = previous + storage[i][j] / total
+			previous = probability_storage[i][j]
+
 	return probability_storage
 
-
-def generate_text_by_degree(degrees, storage, length):
-	"""
-	Creates a Markov sequence string of a specified length in which each consecutive letter
-	is determined based on the probability of the previous letters (the number of letters
-	from which decision is made is determined by the degree).
-	"""
+def generate_text(storage, length):
+	#choose a word randomly to start with
 	sequence = random.choice(storage.keys())
+
 	previous_sequence = sequence
 	for j in range(length):
+		#choose word from dictionary based on their probabilities
 		rand = random.random()
 		for i in storage[previous_sequence]:
 			if rand <= storage[previous_sequence][i]:
-				sequence += str(i)
-				previous_sequence = sequence[-degrees::]
-				break
-	return sequence
-
-def generate_text_by_word(storage, length):
-	"""
-	Creates a Markov sequence string of a specified length in which each consecutive word
-	 is determined based on the probability of the previous word.
-	"""
-
-	sequence = random.choice(storage.keys())
-	previous_sequence = sequence
-
-	for j in range(length):
-		rand = random.random()
-		for i in storage[previous_sequence]:
-			if rand <= storage[previous_sequence][i]:
+				#add word to sequence
 				sequence += " " + str(i)
 				previous_sequence = str(i)
 				break
@@ -145,38 +111,34 @@ def generate_text_by_word(storage, length):
 def strip_text(text):
 	"""
 	Strips the text of all punction, including line breaks.
+	Now uses string.translate, which is much faster than the previously
+	used string.replace.
 	"""
+	return text.translate(string.maketrans("",""), string.punctuation).lower()
 
-	stripped_text = re.sub(r'[^\w\s]','', text).lower()
-	stripped_text = stripped_text.replace('_', '')
-	stripped_text = stripped_text.replace('\n', ' ').replace('\r', '')
-	return stripped_text
+def generate(URL, from_file, length):
+	#loads the text into a string
+	reloaded_copy_of_texts = import_data(URL, from_file)
 
-def generate_by_degree():
-	""" 
-	Main code for doing Markov-text synthesis by degree.
-	"""
-	reloaded_copy_of_texts = import_data()
+	#strips the text of unwanted punctuation, linebreaks, etc...
 	stripped_reloaded_copy_of_texts = strip_text(reloaded_copy_of_texts)
-	degrees = 50
-	length = 100
-	storage = markov_text_synthesis_by_degree(degrees, stripped_reloaded_copy_of_texts)
-	probability_storage = convert_to_probability(storage)
-	#print stripped_reloaded_copy_of_texts
-	#print display_dictionary(storage, probability_storage)
-	print generate_text_by_degree(degrees, probability_storage, length)
 
-def generate_by_word():
-	"""
-	Main code for doing Markov-text synthesis by word. Preferred function.
-	""" 
-
-	reloaded_copy_of_texts = import_data()
-	stripped_reloaded_copy_of_texts = strip_text(reloaded_copy_of_texts)
+	#create a dictionary of the frequencies of words following different words
 	storage = markov_text_synthesis_by_word(stripped_reloaded_copy_of_texts)
-	probability_storage = convert_to_probability(storage)
-	#print stripped_reloaded_copy_of_texts
-	#print display_dictionary(storage, probability_storage)
-	print generate_text_by_word(probability_storage, 50)
 
-generate_by_word()
+	#creates a new dictionary with the relative probability of words following each other
+	probability_storage = convert_to_probability(storage)
+
+	#optional: display created dictionaries
+	display_dictionary(storage, probability_storage)
+
+	#returns generated text
+	return generate_text(probability_storage, length)
+
+if __name__ == '__main__':
+	#First argument is the URL.
+	#Second argument is whether the text should be downloaded or read from a pickle file.
+	#Third argument is the desired length of the output.
+
+	URL_path = 'http://www.gutenberg.org/cache/epub/1342/pg1342.txt'
+	print generate(URL_path, True, 1000)
