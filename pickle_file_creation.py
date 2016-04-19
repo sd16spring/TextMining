@@ -14,13 +14,12 @@ def pickle_this(filename, url, start_word=None):
 	start_word - optional word to start transcription at
 	'''
 	text = URL(url).download()
-	f = open(filename,'w')
-	if not start_word==None:
-		f = f[f.find(start_word):]
-	pickle.dump(text, f)
-	f.close()
+	with open(filename,'w') as f:
+		if not start_word==None:
+			f = f[f.find(start_word):]
+		pickle.dump(text, f)
 
-	
+
 ##Uncomment to call functions as necessary.
 # pickle_this('some_text_file.pickle', 'http://www.gutenberg.org/ebooks/730.txt.utf-8')
 # pickle_this('wizard_of_oz.pickle', 'http://www.gutenberg.org/cache/epub/55/pg55.txt')
