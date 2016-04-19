@@ -55,18 +55,28 @@ for comment in flat_comments: #This will put all the commments in buzz.
 			buzz[word] += 1
 
 sorted_list = []
-not_helpful_words = ['a', 'the', 'to', 'I', 'and', 'you', 'is', 'for', 'it', 'of']
+not_helpful_words = ['a', 'the', 'to', 'I', 'and', 'you', 'is', 'for', 'it', 'of', 'in'
+					'but', 'that', 'on', 'if', 'are', 'with', 'can', 'be', 'get', 'or'
+					'have', 'has', 'just', 'because']
 #list of not helpful words, i.e. particles, etc.  At this point, manually updated.
 #Future work could include noun detection.  
+
+search = raw_input('What string would you like to search for?')
+
+result = "Not Found"
 
 for word in buzz:
 	if word not in not_helpful_words:
 		sorted_list.append((buzz[word], word))
-
+	if word == search:
+		result = word
 sorted_list.sort(reverse=True) #sort the list
 
 top10 = sorted_list[0:10]
-print top10 #the buzzwords delivered.  
+
+
+print top10 #the buzzwords delivered. 
+print "Your search has appeared this many times: " + result 
 
 
 
