@@ -20,6 +20,9 @@ import pickle
 import matplotlib.pyplot as plt
 import time
 import numpy as np
+from scipy import stats
+import seaborn as sns; sns.set()
+from sklearn.cluster import KMeans
 
 
 
@@ -49,7 +52,6 @@ class Roboraj:
 		sys.setdefaultencoding('utf-8') 					#this assists in the ability of the script to take in weird words better.
 
 		fig=plt.figure() 									#makes a matplotlib
-		plt.axis([0,1,0,50])
 		plt.ion()
 		plt.xlabel('Sentiment value: Troll/Negative <-----> Happy/Positive', fontsize = 16)
 		plt.ylabel('Message Frequency (Sum of words\' freq)', fontsize = 16)
@@ -99,10 +101,10 @@ class Roboraj:
 					freq += textmining.findfreq(words)
 
 
-				 												#plots the message's sentiment
+				 												#plots the message's sentiment 
 				plt.scatter(float(textmining.wordsentiment(message)),freq)
 				plt.draw()
-				time.sleep(.05)
+				time.sleep(.05)									#makes it such that this graph will update in real time
 
 
 				print ''
@@ -115,7 +117,22 @@ class Roboraj:
 					filechicken = open("twitchchat", 'r')
 					#textmining.sentiments(pickle.load(filechicken))  #pickle failure
 					textmining.sentiments(filechicken.read()) 	#this allows for the sentiment analysis of the entire message history of this script at the end.
-					filechicken.close()
+					filechicken.close()		
+
+					dataset = textmining.make_array()			#returns a numpy array of the dictionary with all words in it
+
+					est = KMeans(4)								#determines beforehand the number of clusters to find
+					est.fit(dataset)							#finds the x values for the points
+					y_kmeans = est.predict(dataset)          	#finds the associated cluster for the points
+
+					plt.figure()
+					plt.ion()
+					plt.scatter(dataset[:, 0], dataset[:, 1], c=y_kmeans, s=50, cmap='rainbow');     #plots a scatterplot of the data, according to KMeans and clustering
+					plt.xlabel('Word Sentimental Value', fontsize = 16)
+					plt.ylabel('Word Frequency', fontsize = 16)
+					plt.suptitle('Text Clustering Visualization', fontsize = 20)
+					plt.draw()
+
 					plt.show(block=True)						#makes sure the graph stays on after it's done plotting
 					sys.exit()   								 #closes the program
 				count = count + 1								 #moves closer to closing the program

@@ -7,9 +7,12 @@ Integrated into the code, the analyze function can be done in real-time with eac
 
 The sentiment function happens at the end and evaluates the total sentiment polarity of everything that was said on twitch chat during the period
 this was run to determine how positive a streamer's messages are, a maybe? indication of a streamer's trolliness/popularity.
+
+In addition, there are a lot of helper functions at the end for sentiment analysis to aid in text visualization and clustering.
 """
 
 import pickle
+import numpy as np
 from pattern.en import *
 import indicoio
 
@@ -18,7 +21,7 @@ indicoio.config.api_key = '79c1863461910aa764b6e9165916ddeb'
 
 
 
-global mostcommon
+global mostcommon       									#dictionary that holds all the words taken from the streamer
 
 mostcommon = {}
 
@@ -63,9 +66,7 @@ def analyze():
 
 	for item in res:   										 #gets rid of spaces
 		if item == ' ' or item == '':
-			res.remove(item)	
-
-
+			res.remove(item)
 
 															# fancy printing of the top 10
 
@@ -93,7 +94,7 @@ def wordsentiment(words):
 	"""
 	returns the sentiment of the inputted phrase
 	"""
-	if words == '':         			                      #sometimes after filtering the individual phrase has nothing left, this is to account for that
+	if words == '':         			                  	    #sometimes after filtering the individual phrase has nothing left, this is to account for that
 		sentiments = 0
 	else:	
 		sentiments = indicoio.sentiment_hq(words)				#using indico's API because pattern's is bad
@@ -110,4 +111,19 @@ def findfreq(word):
 		return mostcommon[word]
 	else:
 		return 0
+
+def make_array():
+	"""
+	takes the dictionary and returns it as a numpy array of arrays
+	used for text clustering
+	"""
+	result =  np.ndarray(shape=(len(mostcommon), 2))			#create a general numpy array, a giant array the size of the dictionary each consisting of a length 2 array
+	count = 0
+	for word in mostcommon:										
+		result[count][0] = wordsentiment(word)					#assigns the first and second value of the arrays in the numpy array to be the items in the dictionary
+		result[count][1] = mostcommon[word]
+		count+=1												#gets through all the words in the dictionary and assigns them correctly via a counter
+
+	return result	
+
 
