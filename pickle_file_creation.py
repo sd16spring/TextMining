@@ -5,52 +5,26 @@ Downloads Texts from Project Gutenberg and writes to pickle files.
 Done as function declarations so that you can call each text individually, 
 because running every one each time may time out access to Project Gutenberg.
 '''
+def pickle_this(filename, url, start_word=None):
+	'''Creates a pickled file from the url given at the specified filename.
 
-def oliver():
-	oliver_twist_full_text = URL('http://www.gutenberg.org/ebooks/730.txt.utf-8').download()
-	f = open('some_text_file.pickle','w')
-	pickle.dump(oliver_twist_full_text, f)
+	Takes parameters:
+	filename - filename to write to, including .pickle extension, as string)
+	url - url to download from, as a string)
+	start_word - optional word to start transcription at
+	'''
+	text = URL(url).download()
+	f = open(filename,'w')
+	if not start_word==None:
+		f = f[f.find(start_word):]
+	pickle.dump(text, f)
 	f.close()
 
-def wizard():
-	wizard_of_oz_full_text = URL('http://www.gutenberg.org/cache/epub/55/pg55.txt').download()
-	f = open('wizard_of_oz.pickle','w')
-	pickle.dump(wizard_of_oz_full_text, f)
-	f.close()
-
-def hamlet():
-	hamlet_full_text = URL('http://www.gutenberg.org/cache/epub/1524/pg1524.txt').download()
-	hamlet_full_text = hamlet_full_text[hamlet_full_text.find('SCENE.'):]
-	f = open('hamlet.pickle','w')
-	pickle.dump(hamlet_full_text, f)
-	f.close()
-
-def romeo():
-	romeo_full_text = URL('http://www.gutenberg.org/cache/epub/1112/pg1112.txt').download()
-	romeo_full_text = romeo_full_text[romeo_full_text.find('SCENE.'):]
-	f = open('romeo.pickle','w')
-	pickle.dump(romeo_full_text, f)
-	f.close()
-
-def lear():
-	lear_full_text = URL('http://www.gutenberg.org/cache/epub/1128/pg1128.txt').download()
-	lear_full_text = lear_full_text[lear_full_text.find('Scene:'):]
-	f = open('lear.pickle','w')
-	pickle.dump(lear_full_text, f)
-	f.close()
-
-def caesar():
-	caesar_full_text = URL('http://www.gutenberg.org/cache/epub/1120/pg1120.txt').download()
-	caesar_full_text = caesar_full_text[caesar_full_text.find('SCENE:'):]
-	f = open('caesar.pickle','w')
-	pickle.dump(caesar_full_text, f)
-	f.close()
-
+	
 ##Uncomment to call functions as necessary.
-#oliver()
-#wizard()
-#hamlet()
-#romeo()
-#lear()
-#caesar()
-
+# pickle_this('some_text_file.pickle', 'http://www.gutenberg.org/ebooks/730.txt.utf-8')
+# pickle_this('wizard_of_oz.pickle', 'http://www.gutenberg.org/cache/epub/55/pg55.txt')
+# pickle_this('hamlet.pickle','http://www.gutenberg.org/cache/epub/1524/pg1524.txt', start_word='SCENE.')
+# pickle_this('romeo.pickle', 'http://www.gutenberg.org/cache/epub/1112/pg1112.txt', start_word='SCENE.')
+# pickle_this('lear.pickle', 'http://www.gutenberg.org/cache/epub/1128/pg1128.txt', start_word='Scene:')
+# pickle_this('caesar.pickle', 'http://www.gutenberg.org/cache/epub/1120/pg1120.txt', start_word='SCENE:')
