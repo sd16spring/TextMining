@@ -60,11 +60,29 @@ def order_subreddit(subreddits):
     
     return ordered_result
 
+def order_subreddit_by_comments(subreddits):
+    '''
+        Given a list of strings of subreddit names, return a list of tuple containing subreddit name and average sentiment value in an descending order.
+        Subreddit sentiment values are calculated through analyzing comments
+    '''
+    result = []
+    for subreddit in subreddits:
+        result.append((get_sentiments(get_comments(subreddit,100)),subreddit))
+    result.sort(reverse=True)
+
+    ordered_result = []
+    for sentiment_value, subreddit_title in result:
+        ordered_result.append((subreddit_title, sentiment_value))
+    
+    return ordered_result
+
 subreddits = ['aww','nba','science','nottheonion','worldnews']
 #print order_subreddit(subreddits)
 
-print get_sentiments(get_comments('aww',100))
-print get_sentiments(get_comments('nba',100))
-print get_sentiments(get_comments('science',100))
-print get_sentiments(get_comments('nottheonion',100))
-print get_sentiments(get_comments('worldnews',100))
+#print get_sentiments(get_comments('aww',100))
+#print get_sentiments(get_comments('nba',100))
+#print get_sentiments(get_comments('science',100))
+#print get_sentiments(get_comments('nottheonion',100))
+#print get_sentiments(get_comments('worldnews',100))
+
+print order_subreddit_by_comments(subreddits)
