@@ -34,6 +34,17 @@ def strip_msgs(msg_block):
     # make them into a string
     return " ".join(msgs)
 
+def strip_markov(msg_block):
+    """
+    Strips all the messages out of the block of text and removes their p tags, but leaves them as a list
+    """
+    # get all the messages without any of the metadata
+    tagged_msgs = msg_block.contents[2::2]
+    # strip p tags
+    msgs = [str(m)[3:-4] for m in tagged_msgs]
+    # add a special designator for End of Message
+    return " |\n".join(msgs)
+
 def word_cloud(text):
     """
     This function makes a wordcloud object and attempts to generate a word cloud
@@ -74,6 +85,8 @@ if __name__ == '__main__':
     #Extract message data
     block = get_msgs('messages.htm', thread)
     text = strip_msgs(block)
+
+    strip_markov(block)
 
     #try to make a word cloud
     try:
