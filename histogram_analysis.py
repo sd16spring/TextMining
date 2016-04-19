@@ -3,52 +3,12 @@ import pickle
 import string
 from bokeh.charts import Bar, output_file, show
 from pandas import *
-
-''' Download Texts and write to files
-
-oliver_twist_full_text = URL('http://www.gutenberg.org/ebooks/730.txt.utf-8').download()
-#write Oliver Twist to a file
-f = open('some_text_file.pickle','w')
-pickle.dump(oliver_twist_full_text, f)
-f.close()
-
-wizard_of_oz_full_text = URL('http://www.gutenberg.org/cache/epub/55/pg55.txt').download()
-#write OWizard of Oz to a file
-f = open('wizard_of_oz.pickle','w')
-pickle.dump(wizard_of_oz_full_text, f)
-f.close()
-
-hamlet_full_text = URL('http://www.gutenberg.org/cache/epub/1524/pg1524.txt').download()
-hamlet_full_text = hamlet_full_text[hamlet_full_text.find('SCENE.'):]
-f = open('hamlet.pickle','w')
-pickle.dump(hamlet_full_text, f)
-f.close()
-
-romeo_full_text = URL('http://www.gutenberg.org/cache/epub/1112/pg1112.txt').download()
-romeo_full_text = romeo_full_text[romeo_full_text.find('SCENE.'):]
-f = open('romeo.pickle','w')
-pickle.dump(romeo_full_text, f)
-f.close()
-
-lear_full_text = URL('http://www.gutenberg.org/cache/epub/1128/pg1128.txt').download()
-lear_full_text = lear_full_text[lear_full_text.find('Scene:'):]
-f = open('lear.pickle','w')
-pickle.dump(lear_full_text, f)
-f.close()
-
-caesar_full_text = URL('http://www.gutenberg.org/cache/epub/1120/pg1120.txt').download()
-caesar_full_text = caesar_full_text[caesar_full_text.find('SCENE:'):]
-f = open('caesar.pickle','w')
-pickle.dump(caesar_full_text, f)
-f.close()
 '''
+Be sure to have pickled copies of each of the books in the same folder. 
+Obtain these pickled copies of books by running functions as necessary in pickle_file_creation.py
+'''
+
 #Make string copies of books 
-#oliver_file = open('some_text_file.pickle','r')
-#copy_of_oliver_twist = pickle.load(oliver_file)
-
-#wizard_file = open('wizard_of_oz.pickle','r')
-#copy_of_wizard_of_oz = pickle.load(wizard_file)
-
 hamlet_file = open('hamlet.pickle','r')
 copy_of_hamlet = pickle.load(hamlet_file)
 
@@ -61,9 +21,11 @@ copy_of_lear = pickle.load(lear_file)
 caesar_file = open('caesar.pickle','r')
 copy_of_caesar = pickle.load(caesar_file)
 
+
 def most_frequent(s):
-    """ returns dictionary of top 15 words in each book and their percentage-frequencies
-    if chose to return 'rtrn': returns list of words in decreasing order based on frequency of appearances in a string"""
+    ''' returns dictionary of top 15 words in each book and their percentage-frequencies
+    if chose to return 'rtrn': returns list of words in decreasing order based on frequency of appearances in a string
+    '''
     s = s.lower()
     s = s.translate(string.maketrans('',''), string.punctuation)
     totalWords = len(s)
