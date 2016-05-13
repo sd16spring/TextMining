@@ -12,3 +12,7 @@ getLyrics.py
 assembleDataset.py
 
 generateText.py
+
+Dependencies:
+python
+beautifulsoup
