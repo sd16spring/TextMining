@@ -16,5 +16,3 @@ generateText.py
 Dependencies:
 python
 beautifulsoup
-
-test
